@@ -17,9 +17,9 @@ char tableLit[TAM_LITERAL][TAM_LEXEMA] = {""};
 int lti = 0; // controle do indice de literais
 int contLinha = 1;
 
-void error(char msg[])
+void error(int contLinha, char caracter)
 {
-    printf("\nCaracter invalido na linha: %s\n", msg);
+    printf("\nCaracter '%c' invalido na linha: %d\n", caracter, contLinha);
     exit(1);
 }
 
@@ -49,6 +49,9 @@ TOKEN AnaLex(FILE *fd)
             else if (c == '\'')
             {
                 estado = 9;
+                lexema[tamL] = c;
+
+                lexema[++tamL] = '\0';
             }
             else if (c == '\"')
             {
@@ -182,7 +185,7 @@ TOKEN AnaLex(FILE *fd)
             }
             else
             {
-                error("isso é um erro");
+                error(contLinha, c);
             }
             break;
         case 1:
@@ -197,8 +200,8 @@ TOKEN AnaLex(FILE *fd)
                 estado = 3;
 
                 ungetc(c, fd);
-                strcpy(token.lexema, lexema);
 
+                strcpy(token.lexema, lexema);
                 // verificacao de palavras reservadas
                 if (strcmp("MAIN", lexema) == 0)
                 {
@@ -344,14 +347,18 @@ TOKEN AnaLex(FILE *fd)
             if (c >= '0' && c <= '9')
             {
                 estado = 4;
-                lexema[tamL] = c;
-                lexema[++tamL] = '\0';
+                digitos[tamD] = c;
+                digitos[++tamD] = '\0';
             }
             else if (c == '.')
             {
-                estado = 6;
-                lexema[tamL] = c;
-                lexema[++tamL] = '\0';
+                estado = 7;
+                digitos[tamD] = c;
+                digitos[++tamD] = '\0';
+            }
+            else if (c == '_' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+            {
+                error(contLinha, c);
             }
             else
             {
@@ -387,35 +394,29 @@ TOKEN AnaLex(FILE *fd)
             }
             break;
         case 9:
-            token.caractere = c;
-
-            if (c == '\\')
+            if (c == '\'')
+            {
+                error(contLinha, c);
+            }
+            else if (c == '\\')
             {
                 estado = 12;
-
+            }
+            else if (isprint(c))
+            {
+                estado = 10;
                 lexema[tamL] = c;
                 lexema[++tamL] = '\0';
-            }
-            else if (c == '\'')
-            {
-                error("Caracter invalido na expressao!");
-                // sem transicao valida no AFD
             }
             else
             {
-                estado = 10;
-
-                lexema[tamL] = c;
-                lexema[++tamL] = '\0';
+                error(contLinha, c);
             }
             break;
         case 10:
             if (c == '\'')
             {
-                estado = 11;
-
-                lexema[tamL] = c;
-                lexema[++tamL] = '\0';
+                estado = 0;
 
                 token.cat = CONST_CHAR;
 
@@ -425,94 +426,56 @@ TOKEN AnaLex(FILE *fd)
             }
             else
             {
-                error("Caracter invalido na expressao!");
-                // sem transicao valida no AFD
+                error(contLinha, c);
             }
             break;
         case 12:
-            if (c == 'n' || c == '0')
+            if (c == 'n')
             {
-                estado = 11;
-
-                lexema[tamL] = c;
-                lexema[++tamL] = '\0';
+                estado = 10;
+                strcpy(lexema, "enter");
             }
-            else if (c == '\'')
+            else if (c == '0')
             {
-                estado = 13;
+                estado = 10;
 
-                lexema[tamL] = c;
-                lexema[++tamL] = '\0';
-
-                token.cat = CONST_CHAR;
-
-                strcpy(token.lexema, lexema);
-
-                return token;
+                strcpy(lexema, "null");
             }
             else
             {
-                error("Caracter invalido na expressao!");
-                // sem transicao valida no AFD
+                error(contLinha, c);
             }
             break;
         case 15:
             if (c == '\"')
             {
-                estado = 16;
+                if (tamL == 0)
+                {
+                    error(contLinha, c);
+                }
 
-                lexema[tamL] = c;
-                lexema[++tamL] = '\0';
+                estado = 0;
 
                 token.cat = LITERAL;
-
                 strcpy(token.lexema, lexema);
 
                 return token;
+            }
+            else if (isprint(c))
+            {
+                if (tamL < TAM_LEXEMA - 1)
+                {
+                    lexema[tamL] = c;
+                    lexema[++tamL] = '\0';
+                }
+                else
+                {
+                    error(contLinha, c);
+                }
             }
             else if (c == '\n')
             {
-                error("Caracter invalido na expressao!");
-                // sem transicao valida no AFD
-            }
-            else
-            {
-                estado = 16;
-
-                lexema[tamL] = c;
-                lexema[++tamL] = '\0';
-            }
-            break;
-        case 16:
-            if (c == '\n')
-            {
-                error("Caracter invalido na expressao!");
-                // sem transicao valida no AFD
-            }
-            else if (c == '"')
-            {
-                estado = 17;
-
-                lexema[tamL] = c;
-                lexema[++tamL] = '\0';
-
-                strcpy(tableLit[lti], lexema);
-
-                token.cat = LITERAL;
-                token.indice = lti;
-
-                lti++;
-
-                strcpy(token.lexema, lexema);
-
-                return token;
-            }
-            else
-            {
-                estado = 15;
-
-                lexema[tamL] = c;
-                lexema[++tamL] = '\0';
+                error(contLinha, c);
             }
             break;
         case 18:
@@ -550,7 +513,7 @@ TOKEN AnaLex(FILE *fd)
             {
                 estado = 22;
 
-                token.cat = OP_LOGIC;
+                token.cat = OP_RELAC;
                 token.codigo = IGUALDADE;
 
                 return token;
@@ -661,7 +624,7 @@ TOKEN AnaLex(FILE *fd)
             }
             else
             {
-                error("Caracter invalido na expressao!");
+                error(contLinha, c);
             }
             break;
         }

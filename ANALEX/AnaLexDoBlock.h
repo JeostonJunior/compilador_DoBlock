@@ -14,6 +14,7 @@ enum TOKEN_CAT
     CONST_CHAR,
     CONST_FLOAT,
     CONST_INT,
+    ID_CONST,
     LITERAL,
     OP_ARIT,
     OP_LOGIC,

@@ -23,10 +23,10 @@ int main()
             printf("<ID, %s>\n", tk.lexema);
             break;
         case CONST_INT:
-            printf("<CONST_INT, %s>\n", tk.valInt);
+            printf("<CONST_INT, %d>\n", tk.valInt);
             break;
         case CONST_FLOAT:
-            printf("<CONST_FLOAT, %s>\n", tk.valFloat);
+            printf("<CONST_FLOAT, %0.2f>\n", tk.valFloat);
             break;
         case CONST_CHAR:
             printf("<CONST_CHAR, %s>\n", tk.lexema);
@@ -36,6 +36,9 @@ int main()
             break;
         case FIM_EXPR:
             printf("<FIM EXPRESSAO>\n\n", tk.lexema);
+            break;
+        case ID_CONST:
+            printf("<ID_CONST>\n\n");
             break;
         case FIM_PROG:
             printf("\nFIM DO ARQUIVO\n");
