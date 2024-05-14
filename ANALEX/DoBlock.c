@@ -77,82 +77,82 @@ int main()
             switch (tk.codigo)
             {
             case MAIN:
-                printf("<PR, MAIN>\n");
+                printf("<PR, main>\n");
                 break;
             case BLOCK:
-                printf("<PR, BLOCK>\n");
+                printf("<PR, block>\n");
                 break;
             case ENDBLOCK:
-                printf("<PR, ENDBLOCK>\n");
+                printf("<PR, endblock>\n");
                 break;
             case CONST:
-                printf("<PR, CONST>\n");
+                printf("<PR, const>\n");
                 break;
             case CHAR:
-                printf("<PR, CHAR>\n");
+                printf("<PR, char>\n");
                 break;
             case INT:
-                printf("<PR, INT>\n");
+                printf("<PR, int>\n");
                 break;
             case REAL:
-                printf("<PR, REAL>\n");
+                printf("<PR, real>\n");
                 break;
             case BOOL:
-                printf("<PR, BOOL>\n");
+                printf("<PR, bool>\n");
                 break;
             case WITH:
-                printf("<PR, WITH>\n");
+                printf("<PR, with>\n");
                 break;
             case DO:
-                printf("<PR, DO>\n");
+                printf("<PR, do>\n");
                 break;
             case VARYING:
-                printf("<PR, VARYING>\n");
+                printf("<PR, varying>\n");
                 break;
             case FROM:
-                printf("<PR, FROM>\n");
+                printf("<PR, from>\n");
                 break;
             case TO:
-                printf("<PR, TO>\n");
+                printf("<PR, to>\n");
                 break;
             case DOWNTO:
-                printf("<PR, DOWNTO>\n");
+                printf("<PR, downto>\n");
                 break;
             case WHILE:
-                printf("<PR, WHILE>\n");
+                printf("<PR, while>\n");
                 break;
             case FOR:
-                printf("<PR, FOR>\n");
+                printf("<PR, for>\n");
                 break;
             case IF:
-                printf("<PR, IF>\n");
+                printf("<PR, if>\n");
                 break;
             case ENDIF:
-                printf("<PR, ENDIF>\n");
+                printf("<PR, endif>\n");
                 break;
             case ELSEIF:
-                printf("<PR, ELSEIF>\n");
+                printf("<PR, elseif>\n");
                 break;
             case ELSE:
-                printf("<PR, ELSE>\n");
+                printf("<PR, else>\n");
                 break;
             case GOBACK:
-                printf("<PR, GOBACK>\n");
+                printf("<PR, goback>\n");
                 break;
             case GETCHAR:
-                printf("<PR, GETCHAR>\n");
+                printf("<PR, getchar>\n");
                 break;
             case PUTINT:
-                printf("<PR, PUTINT>\n");
+                printf("<PR, putint>\n");
                 break;
             case GETINT:
-                printf("<PR, GETINT>\n");
+                printf("<PR, getint>\n");
                 break;
             case PUTREAL:
-                printf("<PR, PUTREAL>\n");
+                printf("<PR, putreal>\n");
                 break;
             case PUTCHAR:
-                printf("<PR, PUTCHAR>\n");
+                printf("<PR, putchar>\n");
                 break;
             default:
                 break;

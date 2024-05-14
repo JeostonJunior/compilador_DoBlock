@@ -14,7 +14,7 @@
 
 int indiceLiteral = 0;
 char tableLit[TAM_LITERAL][TAM_LEXEMA] = {""};
-int lti = 0; // controle do indice de literais
+int lti = 0;
 int contLinha = 1;
 
 void error(int contLinha, char caracter)
@@ -49,9 +49,9 @@ TOKEN AnaLex(FILE *fd)
             else if (c == '\'')
             {
                 estado = 9;
-                lexema[tamL] = c;
+                lexema[tamL++] = c;
 
-                lexema[++tamL] = '\0';
+                lexema[tamL] = '\0';
             }
             else if (c == '\"')
             {
@@ -65,17 +65,17 @@ TOKEN AnaLex(FILE *fd)
             {
                 estado = 21;
             }
-            else if ((c == '_') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+            else if ((c == '_') || isalpha(c))
             {
                 estado = 1;
-                lexema[tamL] = c;
-                lexema[++tamL] = '\0';
+                lexema[tamL++] = c;
+                lexema[tamL] = '\0';
             }
-            else if (c >= '0' && c <= '9')
+            else if (isdigit(c))
             {
                 estado = 4;
-                digitos[tamD] = c;
-                digitos[++tamD] = '\0';
+                digitos[tamD++] = c;
+                digitos[tamD] = '\0';
             }
             else if (c == '+')
             {
@@ -174,9 +174,6 @@ TOKEN AnaLex(FILE *fd)
             else if (c == '\n')
             {
                 estado = 0;
-                // token.cat = FIM_EXPR;
-                // contLinha++;
-                // return token;
             }
             else if (c == EOF)
             {
@@ -189,11 +186,11 @@ TOKEN AnaLex(FILE *fd)
             }
             break;
         case 1:
-            if (c == '_' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))
+            if (c == '_' || isalpha(c) || isdigit(c))
             {
                 estado = 1;
-                lexema[tamL] = c;
-                lexema[++tamL] = '\0';
+                lexema[tamL++] = c;
+                lexema[tamL] = '\0';
             }
             else
             {
@@ -202,140 +199,151 @@ TOKEN AnaLex(FILE *fd)
                 ungetc(c, fd);
 
                 strcpy(token.lexema, lexema);
+
                 // verificacao de palavras reservadas
-                if (strcmp("MAIN", lexema) == 0)
+                if (strcmp("main", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = MAIN;
                 }
-                else if (strcmp("BLOCK", lexema) == 0)
+                else if (strcmp("block", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = BLOCK;
                 }
-                else if (strcmp("ENDBLOCK", lexema) == 0)
+                else if (strcmp("endblock", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = ENDBLOCK;
                 }
-                else if (strcmp("CONST", lexema) == 0)
+                else if (strcmp("const", lexema) == 0)
                 {
-                    token.cat = PAL_RESERV;
-                    token.codigo = CONST;
+                    char proxima[5];
+                    fscanf(fd, "%s", proxima);
+                    if (strcmp(proxima, "int") == 0)
+                    {
+                        token.cat = ID_CONST;
+                        strcat(lexema, "\t");
+                        strcpy(token.lexema, proxima);
+                    }
+                    else
+                    {
+                        token.cat = PAL_RESERV;
+                        token.codigo = CONST;
+                    }
                 }
-                else if (strcmp("CHAR", lexema) == 0)
+                else if (strcmp("char", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = CHAR;
                 }
-                else if (strcmp("INT", lexema) == 0)
+                else if (strcmp("int", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = INT;
                 }
-                else if (strcmp("REAL", lexema) == 0)
+                else if (strcmp("real", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = REAL;
                 }
-                else if (strcmp("BOOL", lexema) == 0)
+                else if (strcmp("bool", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = BOOL;
                 }
-                else if (strcmp("WITH", lexema) == 0)
+                else if (strcmp("with", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = WITH;
                 }
-                else if (strcmp("DO", lexema) == 0)
+                else if (strcmp("do", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = DO;
                 }
-                else if (strcmp("VARYING", lexema) == 0)
+                else if (strcmp("varying", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = VARYING;
                 }
-                else if (strcmp("FROM", lexema) == 0)
+                else if (strcmp("from", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = FROM;
                 }
-                else if (strcmp("TO", lexema) == 0)
+                else if (strcmp("to", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = TO;
                 }
-                else if (strcmp("DOWNTO", lexema) == 0)
+                else if (strcmp("downto", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = DOWNTO;
                 }
-                else if (strcmp("WHILE", lexema) == 0)
+                else if (strcmp("while", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = WHILE;
                 }
-                else if (strcmp("FOR", lexema) == 0)
+                else if (strcmp("for", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = FOR;
                 }
-                else if (strcmp("IF", lexema) == 0)
+                else if (strcmp("if", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = IF;
                 }
-                else if (strcmp("ELSEIF", lexema) == 0)
+                else if (strcmp("elseif", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = ELSEIF;
                 }
-                else if (strcmp("ELSE", lexema) == 0)
+                else if (strcmp("else", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = ELSE;
                 }
-                else if (strcmp("ENDIF", lexema) == 0)
+                else if (strcmp("endif", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = ENDIF;
                 }
-                else if (strcmp("GOBACK", lexema) == 0)
+                else if (strcmp("goback", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = GOBACK;
                 }
-                else if (strcmp("GETINT", lexema) == 0)
+                else if (strcmp("getint", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = GETINT;
                 }
-                else if (strcmp("GETCHAR", lexema) == 0)
+                else if (strcmp("getchar", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = GETCHAR;
                 }
-                else if (strcmp("PUTINT", lexema) == 0)
+                else if (strcmp("putint", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = PUTINT;
                 }
-                else if (strcmp("PUTREAL", lexema) == 0)
+                else if (strcmp("putreal", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = PUTREAL;
                 }
-                else if (strcmp("PUTCHAR", lexema) == 0)
+                else if (strcmp("putchar", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = PUTCHAR;
                 }
                 else
                 {
-                    // Se a palavra não for uma palavra reservada conhecida, retorne um token ID
                     token.cat = ID;
                     strcpy(token.lexema, lexema);
                 }
@@ -344,19 +352,19 @@ TOKEN AnaLex(FILE *fd)
             }
             break;
         case 4:
-            if (c >= '0' && c <= '9')
+            if (isdigit(c))
             {
                 estado = 4;
-                digitos[tamD] = c;
-                digitos[++tamD] = '\0';
+                digitos[tamD++] = c;
+                digitos[tamD] = '\0';
             }
             else if (c == '.')
             {
                 estado = 7;
-                digitos[tamD] = c;
-                digitos[++tamD] = '\0';
+                digitos[tamD++] = c;
+                digitos[tamD] = '\0';
             }
-            else if (c == '_' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+            else if (c == '_' || isalpha(c))
             {
                 error(contLinha, c);
             }
@@ -372,18 +380,16 @@ TOKEN AnaLex(FILE *fd)
             }
             break;
         case 7:
-            if (c >= '0' && c <= '9')
+            if (isdigit(c))
             {
                 estado = 7;
 
-                digitos[tamD] = c;
-                digitos[++tamD] = '\0';
+                digitos[tamD++] = c;
+                digitos[tamD] = '\0';
             }
             else
             {
-                // transicao OUTRO* do estado 8 do AFD
-
-                estado = 8; // monta token constante float e retorna
+                estado = 8;
 
                 ungetc(c, fd);
 
@@ -405,8 +411,8 @@ TOKEN AnaLex(FILE *fd)
             else if (isprint(c))
             {
                 estado = 10;
-                lexema[tamL] = c;
-                lexema[++tamL] = '\0';
+                lexema[tamL++] = c;
+                lexema[tamL] = '\0';
             }
             else
             {
@@ -465,8 +471,8 @@ TOKEN AnaLex(FILE *fd)
             {
                 if (tamL < TAM_LEXEMA - 1)
                 {
-                    lexema[tamL] = c;
-                    lexema[++tamL] = '\0';
+                    lexema[tamL++] = c;
+                    lexema[tamL] = '\0';
                 }
                 else
                 {
@@ -483,8 +489,8 @@ TOKEN AnaLex(FILE *fd)
             {
                 estado = 19;
 
-                lexema[tamL] = c;
-                lexema[++tamL] = '\0';
+                lexema[tamL++] = c;
+                lexema[tamL] = '\0';
             }
             else
             {
