@@ -1,8 +1,8 @@
 #include <stdio.h>
 
-#ifndef ANALEXDOBLOCK
+#ifndef ANALEXDOBLOCK_H
 
-#define ANALEXDOBLOCK
+#define ANALEXDOBLOCK_H
 
 #define TAM_MAX_LEXEMA 31
 

@@ -1,21 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <string.h>
-#include "AnaLexDoBlock.h"
-#include "AnaLexDoBlock.c"
-#include "FuncAuxDoBlock.h"
-#include "FuncAuxDoBlock.c"
-
-FILE *fd;
-TOKEN tk;
-
-char TABS[200] = "";
-
-int main()
+void Analisador_lexico()
 {
+    FILE *fd;
 
-    fd = fopen("test.txt", "r");
+    fd = fopen("teste.dat", "r");
 
     while (1)
     {
@@ -232,6 +219,4 @@ int main()
         }
     }
     fclose(fd);
-
-    return 0;
 }

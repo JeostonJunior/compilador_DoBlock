@@ -1,5 +1,5 @@
-#ifndef FUNCAUXDOBLOCK
-#define FUNCAUXDOBLOCK
+#ifndef FUNCAUXDOBLOCK_H
+#define FUNCAUXDOBLOCK_H
 
 enum MOVIM
 {
@@ -8,10 +8,11 @@ enum MOVIM
     RETROCEDE
 };
 
-extern enum BOOL mostraArvore;
+// extern enum BOOL mostraArvore;
 extern char TABS[200];
 
-void error(char msg[]);
+void errorLex(int contLinha, char caracter);
+void errorSint(int contLinha, char caracter[]);
 void PrintNodo(char info[], int movim);
 void PrintNodoInt(int val, int movim);
 

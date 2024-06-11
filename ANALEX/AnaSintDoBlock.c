@@ -1,21 +1,25 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <ctype.h>
+#include "AnaLexDoBlock.c"
 #include "AnaLexDoBlock.h"
 #include "AnaSintDoBlock.h"
-#include "FuncAuxDoBlock.h"
 
 void consome(int esperado)
 {
     if (tk.cat == esperado || tk.codigo == esperado)
     {
+        printf("Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
         tk = AnaLex(fd);
+        printf("Consome - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
     }
     else
     {
+        printf("Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
         char errMsg[100];
         sprintf(errMsg, "Token inesperado. Esperado: %d, Encontrado: %d", esperado, tk.codigo);
-        error(errMsg);
+        errorSint(contLinha, errMsg);
     }
 }
 
@@ -35,7 +39,7 @@ void prog()
 
     if (!(tk.cat == PAL_RESERV && tk.codigo == MAIN))
     {
-        error("Declaração de bloco main esperada.");
+        errorSint(contLinha, "Declaracao de bloco main esperada.");
     }
 
     block_main();
@@ -47,7 +51,7 @@ void prog()
 
     if (tk.cat != FIM_PROG)
     {
-        error("Fim do Arquivo Esperado");
+        errorSint(contLinha, "Fim do Arquivo Esperado");
     }
 }
 
@@ -58,6 +62,7 @@ void decl_list_var()
         consome(CONST);
     }
 
+    tk = AnaLex(fd);
     tipo();
     decl_var();
 
@@ -110,7 +115,8 @@ void block_main()
 
     while (tk.codigo != ENDBLOCK)
     {
-        cmd();
+        break;
+        // cmd();
     }
     consome(ENDBLOCK);
 }
@@ -160,25 +166,32 @@ void block_def()
 
     while (tk.codigo != ENDBLOCK)
     {
-        cmd();
+        break;
+        // cmd();
     }
     consome(ENDBLOCK);
 }
+
 void tipo()
 {
+    printf("TIPO - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
+
     if (tk.codigo == CHAR || tk.codigo == INT || tk.codigo == REAL || tk.codigo == BOOL)
     {
+        printf("TIPO Dentro - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
         consome(tk.codigo);
     }
     else
     {
-        error("Tipo inválido");
+        errorSint(contLinha, "Tipo invalido");
     }
 }
 
 void decl_var()
 {
     consome(ID);
+
+    // printf("Cod: %d | Lex: %d", tk.codigo, tk.cat);
 
     if (tk.codigo == ABRE_COL)
     {
@@ -219,7 +232,7 @@ void decl_var()
         }
         else
         {
-            error("Valor esperado após '='.");
+            errorSint(contLinha, "Valor esperado após '='.");
         }
     }
 }

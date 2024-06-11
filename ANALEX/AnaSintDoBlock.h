@@ -1,5 +1,5 @@
-#ifndef ANASINTDOBLOCK
-#define ANASINTDOBLOCK
+#ifndef ANASINTDOBLOCK_H
+#define ANASINTDOBLOCK_H
 
 #include "AnaLexDoBlock.h"
 #include <stdbool.h>

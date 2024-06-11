@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "AnaLexDoBlock.h"
+#include "FuncAuxDoBlock.h"
 
 #define TAM_LEXEMA 50
 #define TAM_LITERAL 50
@@ -16,12 +17,6 @@ int indiceLiteral = 0;
 char tableLit[TAM_LITERAL][TAM_LEXEMA] = {""};
 int lti = 0;
 int contLinha = 1;
-
-void error(int contLinha, char caracter)
-{
-    printf("\nCaracter '%c' invalido na linha: %d\n", caracter, contLinha);
-    exit(1);
-}
 
 TOKEN AnaLex(FILE *fd)
 {
@@ -182,7 +177,7 @@ TOKEN AnaLex(FILE *fd)
             }
             else
             {
-                error(contLinha, c);
+                errorLex(contLinha, c);
             }
             break;
         case 1:
@@ -366,7 +361,7 @@ TOKEN AnaLex(FILE *fd)
             }
             else if (c == '_' || isalpha(c))
             {
-                error(contLinha, c);
+                errorLex(contLinha, c);
             }
             else
             {
@@ -402,7 +397,7 @@ TOKEN AnaLex(FILE *fd)
         case 9:
             if (c == '\'')
             {
-                error(contLinha, c);
+                errorLex(contLinha, c);
             }
             else if (c == '\\')
             {
@@ -416,7 +411,7 @@ TOKEN AnaLex(FILE *fd)
             }
             else
             {
-                error(contLinha, c);
+                errorLex(contLinha, c);
             }
             break;
         case 10:
@@ -432,7 +427,7 @@ TOKEN AnaLex(FILE *fd)
             }
             else
             {
-                error(contLinha, c);
+                errorLex(contLinha, c);
             }
             break;
         case 12:
@@ -449,7 +444,7 @@ TOKEN AnaLex(FILE *fd)
             }
             else
             {
-                error(contLinha, c);
+                errorLex(contLinha, c);
             }
             break;
         case 15:
@@ -457,7 +452,7 @@ TOKEN AnaLex(FILE *fd)
             {
                 if (tamL == 0)
                 {
-                    error(contLinha, c);
+                    errorLex(contLinha, c);
                 }
 
                 estado = 0;
@@ -476,12 +471,12 @@ TOKEN AnaLex(FILE *fd)
                 }
                 else
                 {
-                    error(contLinha, c);
+                    errorLex(contLinha, c);
                 }
             }
             else if (c == '\n')
             {
-                error(contLinha, c);
+                errorLex(contLinha, c);
             }
             break;
         case 18:
@@ -630,7 +625,7 @@ TOKEN AnaLex(FILE *fd)
             }
             else
             {
-                error(contLinha, c);
+                errorLex(contLinha, c);
             }
             break;
         }
