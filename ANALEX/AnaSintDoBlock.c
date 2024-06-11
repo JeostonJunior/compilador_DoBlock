@@ -30,13 +30,13 @@ void prog()
     printf("PROG - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
     while (tk.cat == PAL_RESERV && (tk.codigo == CONST || tk.codigo == INT || tk.codigo == CHAR || tk.codigo == REAL || tk.codigo == BOOL))
     {
-        printf("ENTROU -> decl_list_var\n");
+        printf("\nENTROU -> decl_list_var\n");
         decl_list_var();
     }
 
     while (tk.cat == PAL_RESERV && tk.codigo == BLOCK)
     {
-        printf("ENTROU -> decl_block_prot\n");
+        printf("\nENTROU -> decl_block_prot\n");
         decl_block_prot();
     }
 
@@ -106,6 +106,7 @@ void decl_block_prot()
 
 void block_main()
 {
+    printf("\nENTROU -> block_main\n");
     consome(BLOCK);
     consome(MAIN);
 
@@ -175,6 +176,7 @@ void block_def()
 
 void tipo()
 {
+    printf("\nENTROU -> tipo\n");
     printf("TIPO entrada - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
 
     if (tk.codigo == CHAR || tk.codigo == INT || tk.codigo == REAL || tk.codigo == BOOL)
@@ -190,6 +192,7 @@ void tipo()
 
 void decl_var()
 {
+    printf("\nENTROU -> decl_var\n");
     printf("decl_var Entrada - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
     consome(ID);
 
