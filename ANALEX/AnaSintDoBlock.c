@@ -10,9 +10,9 @@ void consome(int esperado)
 {
     if (tk.cat == esperado || tk.codigo == esperado)
     {
-        printf("Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
+        printf("Consome entrada - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
         tk = AnaLex(fd);
-        printf("Consome - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
+        printf("Consome saida - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
     }
     else
     {
@@ -27,13 +27,16 @@ void prog()
 {
     tk = AnaLex(fd);
 
+    printf("PROG - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
     while (tk.cat == PAL_RESERV && (tk.codigo == CONST || tk.codigo == INT || tk.codigo == CHAR || tk.codigo == REAL || tk.codigo == BOOL))
     {
+        printf("ENTROU -> decl_list_var\n");
         decl_list_var();
     }
 
     while (tk.cat == PAL_RESERV && tk.codigo == BLOCK)
     {
+        printf("ENTROU -> decl_block_prot\n");
         decl_block_prot();
     }
 
@@ -61,8 +64,6 @@ void decl_list_var()
     {
         consome(CONST);
     }
-
-    tk = AnaLex(fd);
     tipo();
     decl_var();
 
@@ -174,7 +175,7 @@ void block_def()
 
 void tipo()
 {
-    printf("TIPO - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
+    printf("TIPO entrada - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
 
     if (tk.codigo == CHAR || tk.codigo == INT || tk.codigo == REAL || tk.codigo == BOOL)
     {
@@ -189,9 +190,8 @@ void tipo()
 
 void decl_var()
 {
+    printf("decl_var Entrada - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
     consome(ID);
-
-    // printf("Cod: %d | Lex: %d", tk.codigo, tk.cat);
 
     if (tk.codigo == ABRE_COL)
     {
@@ -205,9 +205,11 @@ void decl_var()
 
     if (tk.codigo == ATRIBUICAO)
     {
+        printf("ATRIBUICAO Entrada - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
         consome(ATRIBUICAO);
         if (tk.cat == CONST_INT || tk.cat == CONST_FLOAT || tk.cat == CONST_CHAR || tk.cat == LITERAL)
         {
+            printf("CONSTANTES Entrada - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
             consome(tk.cat);
         }
         else if (tk.codigo == ABRE_CHAVE)
@@ -234,5 +236,6 @@ void decl_var()
         {
             errorSint(contLinha, "Valor esperado após '='.");
         }
+        printf("ATRIBUICAO Saida - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
     }
 }

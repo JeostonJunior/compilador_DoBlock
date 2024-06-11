@@ -13,12 +13,21 @@ void Analisador_sintatico()
 {
     fd = fopen("teste.dat", "r");
 
+    // while (true)
+    // {
+    //     tk = AnaLex(fd);
+    //     prog();
+    //     if (tk.cat == FIM_PROG)
+    //     {
+    //         printf("<Resultado> Expressao OK!\n");
+    //     }
+    // }
     prog();
-
     if (tk.cat == FIM_PROG)
     {
         printf("<Resultado> Expressao OK!\n");
     }
+
     fclose(fd);
 }
 
