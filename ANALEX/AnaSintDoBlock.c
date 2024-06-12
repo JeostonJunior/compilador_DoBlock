@@ -242,3 +242,105 @@ void decl_var()
         printf("ATRIBUICAO Saida - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
     }
 }
+
+void atrib()
+{
+    consome(ID);
+    while (tk.codigo == ABRE_COL)
+    {
+        consome(ABRE_COL);
+        expr();
+        consome(FECHA_COL);
+    }
+    consome(ATRIBUICAO);
+    expr();
+}
+
+void expr()
+{
+    expr_simp();
+    if (tk.codigo == IGUALDADE || tk.codigo == DIFERENTE || tk.codigo == MENOR_IGUAL ||
+        tk.codigo == MENOR_QUE || tk.codigo == MAIOR_IGUAL || tk.codigo == MAIOR_QUE)
+    {
+        op_rel();
+        expr_simp();
+    }
+}
+
+void expr_simp()
+{
+    if (tk.codigo == ADICAO || tk.codigo == SUBTRACAO)
+    {
+        consome(tk.codigo);
+    }
+    termo();
+    while (tk.codigo == ADICAO || tk.codigo == SUBTRACAO || tk.codigo == OR_LOGIC)
+    {
+        consome(tk.codigo);
+        termo();
+    }
+}
+
+void termo()
+{
+    fator();
+    while (tk.codigo == MULTIPLICACAO || tk.codigo == DIVISAO || tk.codigo == AND_LOGIC)
+    {
+        consome(tk.codigo);
+        fator();
+    }
+}
+
+void fator()
+{
+    if (tk.cat == ID)
+    {
+        consome(ID);
+        while (tk.codigo == ABRE_COL)
+        {
+            consome(ABRE_COL);
+            expr();
+            consome(FECHA_COL);
+        }
+    }
+    else if (tk.cat == CONST_INT)
+    {
+        consome(CONST_INT);
+    }
+    else if (tk.cat == CONST_FLOAT)
+    {
+        consome(CONST_FLOAT);
+    }
+    else if (tk.cat == CONST_CHAR)
+    {
+        consome(CONST_CHAR);
+    }
+    else if (tk.codigo == ABRE_PAR)
+    {
+        consome(ABRE_PAR);
+        expr();
+        consome(FECHA_PAR);
+    }
+    else if (tk.codigo == NOT_LOGIC)
+    {
+        consome(NOT_LOGIC);
+        fator();
+    }
+    else
+    {
+        errorSint(contLinha, "Fator invalido");
+    }
+}
+
+void op_rel()
+{
+    if (tk.codigo == IGUALDADE || tk.codigo == DIFERENTE || tk.codigo == MENOR_IGUAL ||
+        tk.codigo == MENOR_QUE || tk.codigo == MAIOR_IGUAL || tk.codigo == MAIOR_QUE)
+    {
+        consome(tk.codigo);
+    }
+    else
+    {
+        errorSint(contLinha, "Operador relacional esperado");
+    }
+}

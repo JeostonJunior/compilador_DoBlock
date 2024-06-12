@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.py": "python",
+        "*.c": "c",
+        "analexdoblock.h": "c",
+        "anasintdoblock.h": "c"
+    }
+}
