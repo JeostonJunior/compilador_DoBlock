@@ -8,64 +8,65 @@
 
 enum TOKEN_CAT
 {
-    ID = 1,
-    PAL_RESERV,
-    SINAL,
-    CONST_CHAR,
-    CONST_FLOAT,
-    CONST_INT,
-    ID_CONST,
-    LITERAL,
-    OP_ARIT,
-    OP_LOGIC,
-    OP_RELAC,
-    FIM_EXPR,
-    FIM_PROG
+    ID = 1,      // 1
+    PAL_RESERV,  // 2
+    SINAL,       // 3
+    CONST_CHAR,  // 4
+    CONST_FLOAT, // 5
+    CONST_INT,   // 6
+    ID_CONST,    // 7
+    LITERAL,     // 8
+    OP_ARIT,     // 9
+    OP_LOGIC,    // 10
+    OP_RELAC,    // 11
+    FIM_EXPR,    // 12
+    FIM_PROG     // 13
 };
 
 /* Onde: ID: Identificador, PAL_RESERV: Palavra Reservada ;  SN: Sinal; CONST_INT: Constante numérica inteira ; CONST_FLOAT : Constante númerica real ;  CONST_CHAR Constante caractere , LITERAL: cadeia de caracter ; */
 
 enum PAL_RESERV
 {
-    MAIN = 1,
-    BLOCK,
-    ENDBLOCK,
-    CONST,
-    CHAR,
-    INT,
-    REAL,
-    BOOL,
-    WITH,
-    DO,
-    VARYING,
-    FROM,
-    TO,
-    DOWNTO,
-    WHILE,
-    FOR,
-    IF,
-    ELSEIF,
-    ELSE,
-    ENDIF,
-    GOBACK,
-    GETINT,
-    GETCHAR,
-    PUTINT,
-    PUTREAL,
-    PUTCHAR
+    MAIN = 1, // 1
+    BLOCK,    // 2
+    ENDBLOCK, // 3
+    CONST,    // 4
+    CHAR,     // 5
+    INT,      // 6
+    REAL,     // 7
+    BOOL,     // 8
+    WITH,     // 9
+    DO,       // 10
+    VARYING,  // 11
+    FROM,     // 12
+    TO,       // 13
+    DOWNTO,   // 14
+    WHILE,    // 15
+    FOR,      // 16
+    IF,       // 17
+    ELSEIF,   // 18
+    ELSE,     // 19
+    ENDIF,    // 20
+    GOBACK,   // 21
+    GETINT,   // 22
+    GETCHAR,  // 23
+    PUTINT,   // 24
+    PUTREAL,  // 25
+    PUTCHAR   // 26
 };
+
 // Palavras reservadas da linguagem
 
 enum SINAIS
 {
-    ABRE_PAR = 1,
-    FECHA_PAR,
-    ABRE_CHAVE,
-    FECHA_CHAVE,
-    ABRE_COL,
-    FECHA_COL,
-    VIRGULA,
-    REFERENCIA
+    ABRE_PAR = 1, // 1
+    FECHA_PAR,    // 2
+    ABRE_CHAVE,   // 3
+    FECHA_CHAVE,  // 4
+    ABRE_COL,     // 5
+    FECHA_COL,    // 6
+    VIRGULA,      // 7
+    REFERENCIA    // 8
 };
 // Sinais válidos da linguagem
 
