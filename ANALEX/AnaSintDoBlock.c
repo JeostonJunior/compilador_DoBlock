@@ -96,6 +96,13 @@ void decl_block_prot()
                 break;
             }
 
+            if (tk.codigo == REFERENCIA)
+            {
+                printf("[decl_block_prot][REFERENCIA][Entrada]\n");
+                consome(REFERENCIA);
+                printf("[decl_block_prot][REFERENCIA][Saida]\n\n");
+            }
+
             tipo();
 
             if (tk.codigo == ABRE_COL)
@@ -110,23 +117,19 @@ void decl_block_prot()
             }
             if (tk.codigo == VIRGULA)
             {
-                printf("[decl_block_prot][VIRGULA][Entrada]\n\n");
+                printf("[decl_block_prot][VIRGULA][Entrada]\n");
                 consome(VIRGULA);
                 printf("[decl_block_prot][VIRGULA][Saida]\n\n");
             }
         }
         printf("[decl_block_prot][WITH][Saida]\n\n");
     }
-    else
-    {
-        errorSint(contLinha, "With esperado");
-    }
     printf("\nSAIU -> decl_block_prot\n");
 }
 
 void block_main()
 {
-    printf("\nENTROU -> block_main\n");
+    printf("\nENTROU -> block_main\n\n");
     consome(BLOCK);
     consome(MAIN);
 
@@ -137,7 +140,6 @@ void block_main()
 
     while (tk.codigo != ENDBLOCK)
     {
-        break;
         // cmd();
     }
     consome(ENDBLOCK);
