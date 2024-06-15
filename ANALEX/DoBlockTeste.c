@@ -4,6 +4,8 @@
 #include <string.h>
 #include "AnaSintDoBlock.c"
 #include "FuncAuxDoBlock.c"
+#include "AnaSintDoBlock.h"
+#include "FuncAuxDoBlock.h"
 
 FILE *fd;
 TOKEN tk;
