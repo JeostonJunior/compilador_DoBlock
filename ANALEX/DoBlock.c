@@ -41,9 +41,6 @@ int main()
         case FIM_EXPR:
             printf("<FIM EXPRESSAO>\n\n", tk.lexema);
             break;
-        case ID_CONST:
-            printf("<ID_CONST>\n\n");
-            break;
         case FIM_PROG:
             printf("\nFIM DO ARQUIVO\n");
         case SINAL:

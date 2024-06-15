@@ -8,19 +8,19 @@
 
 enum TOKEN_CAT
 {
-    ID = 1,
-    PAL_RESERV,
-    SINAL,
-    CONST_CHAR,
-    CONST_FLOAT,
-    CONST_INT,
-    ID_CONST,
-    LITERAL,
-    OP_ARIT,
-    OP_LOGIC,
-    OP_RELAC,
-    FIM_EXPR,
-    FIM_PROG
+    ID = 1,      // 1
+    PAL_RESERV,  // 2
+    SINAL,       // 3
+    CONST_CHAR,  // 4
+    CONST_FLOAT, // 5
+    CONST_INT,   // 6
+    ID_CONST,    // 7
+    LITERAL,     // 8
+    OP_ARIT,     // 9
+    OP_LOGIC,    // 10
+    OP_RELAC,    // 11
+    FIM_EXPR,    // 12
+    FIM_PROG     // 13
 };
 
 /* Onde: ID: Identificador, PAL_RESERV: Palavra Reservada ;  SN: Sinal; CONST_INT: Constante numérica inteira ; CONST_FLOAT : Constante númerica real ;  CONST_CHAR Constante caractere , LITERAL: cadeia de caracter ; */
@@ -41,7 +41,8 @@ enum PAL_RESERV
     FROM,
     TO,
     DOWNTO,
-    WHILE,ENDWHILE,
+    WHILE,
+    ENDWHILE,
     FOR,
     IF,
     ELSEIF,
@@ -49,23 +50,25 @@ enum PAL_RESERV
     ENDIF,
     GOBACK,
     GETINT,
-    GETCHAR,GETREAL,
+    GETCHAR,
+    GETREAL,
     PUTINT,
     PUTREAL,
     PUTCHAR
 };
+
 // Palavras reservadas da linguagem
 
 enum SINAIS
 {
-    ABRE_PAR = 1,
-    FECHA_PAR,
-    ABRE_CHAVE,
-    FECHA_CHAVE,
-    ABRE_COL,
-    FECHA_COL,
-    VIRGULA,
-    REFERENCIA
+    ABRE_PAR = 1, // 1
+    FECHA_PAR,    // 2
+    ABRE_CHAVE,   // 3
+    FECHA_CHAVE,  // 4
+    ABRE_COL,     // 5
+    FECHA_COL,    // 6
+    VIRGULA,      // 7
+    REFERENCIA    // 8
 };
 // Sinais válidos da linguagem
 

@@ -1,12 +1,17 @@
+<<<<<<< HEAD
 // Programa exemplo em Do::Block - Alternativa 1 
 
 block Para_Cada_Lin with int[][],int 
 
 block Para_Cada_Col with int[][],int,int 
+=======
+block main 
+>>>>>>> main
 
 int mat[DIM_LIN][DIM_COL] 
 int i 
 
+<<<<<<< HEAD
 do Para_Cada_Lin with mat,i  
 
 varying i from 0 to DIM_LIN-1 
@@ -30,4 +35,9 @@ else m[l][c] = 0
 
 endif 
 
+=======
+do Para_Cada_Lin with mat, i  
+varying i from 0 to DIM_LIN-1 
+
+>>>>>>> main
 endblock 
