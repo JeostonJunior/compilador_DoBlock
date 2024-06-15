@@ -41,7 +41,7 @@ enum PAL_RESERV
     FROM,
     TO,
     DOWNTO,
-    WHILE,
+    WHILE,ENDWHILE,
     FOR,
     IF,
     ELSEIF,
@@ -49,7 +49,7 @@ enum PAL_RESERV
     ENDIF,
     GOBACK,
     GETINT,
-    GETCHAR,
+    GETCHAR,GETREAL,
     PUTINT,
     PUTREAL,
     PUTCHAR
