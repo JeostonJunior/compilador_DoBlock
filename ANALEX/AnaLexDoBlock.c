@@ -213,19 +213,19 @@ TOKEN AnaLex(FILE *fd)
                 }
                 else if (strcmp("const", lexema) == 0)
                 {
-                    // char proxima[5];
-                    // fscanf(fd, "%s", proxima);
-                    // if (strcmp(proxima, "int") == 0)
-                    // {
-                    //     token.cat = ID_CONST;
-                    //     strcat(lexema, "\t");
-                    //     strcpy(token.lexema, proxima);
-                    // }
-                    // else
-                    // {
-                    //     token.cat = PAL_RESERV;
-                    //     token.codigo = CONST;
-                    // }
+                     char proxima[5];
+                     fscanf(fd, "%s", proxima);
+                     if (strcmp(proxima, "int") == 0)
+                     {
+                         token.cat = ID_CONST;
+                         strcat(lexema, "\t");
+                         strcpy(token.lexema, proxima);
+                    }
+                    else
+                     {
+                         token.cat = PAL_RESERV;
+                         token.codigo = CONST;
+                     }
                     token.cat = PAL_RESERV;
                     token.codigo = CONST;
                 }
