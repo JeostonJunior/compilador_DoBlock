@@ -27,34 +27,34 @@ enum TOKEN_CAT
 
 enum PAL_RESERV
 {
-    MAIN = 1,
-    BLOCK,
-    ENDBLOCK,
-    CONST,
-    CHAR,
-    INT,
-    REAL,
-    BOOL,
-    WITH,
-    DO,
-    VARYING,
-    FROM,
-    TO,
-    DOWNTO,
-    WHILE,
-    ENDWHILE,
-    FOR,
-    IF,
-    ELSEIF,
-    ELSE,
-    ENDIF,
-    GOBACK,
-    GETINT,
-    GETCHAR,
-    GETREAL,
-    PUTINT,
-    PUTREAL,
-    PUTCHAR
+    MAIN = 1, // 1
+    BLOCK,    // 2
+    ENDBLOCK, // 3
+    CONST,    // 4
+    CHAR,     // 5
+    INT,      // 6
+    REAL,     // 7
+    BOOL,     // 8
+    WITH,     // 9
+    DO,       // 10
+    VARYING,  // 11
+    FROM,     // 12
+    TO,       // 13
+    DOWNTO,   // 14
+    WHILE,    // 15
+    ENDWHILE, // 16
+    FOR,      // 17
+    IF,       // 18
+    ELSEIF,   // 19
+    ELSE,     // 20
+    ENDIF,    // 21
+    GOBACK,   // 22
+    GETINT,   // 23
+    GETCHAR,  // 24
+    GETREAL,  // 25
+    PUTINT,   // 26
+    PUTREAL,  // 27
+    PUTCHAR   // 28
 };
 
 // Palavras reservadas da linguagem

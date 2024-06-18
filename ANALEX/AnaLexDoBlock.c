@@ -213,19 +213,20 @@ TOKEN AnaLex(FILE *fd)
                 }
                 else if (strcmp("const", lexema) == 0)
                 {
-                     char proxima[5];
-                     fscanf(fd, "%s", proxima);
-                     if (strcmp(proxima, "int") == 0)
-                     {
-                         token.cat = ID_CONST;
-                         strcat(lexema, "\t");
-                         strcpy(token.lexema, proxima);
-                    }
-                    else
-                     {
-                         token.cat = PAL_RESERV;
-                         token.codigo = CONST;
-                     }
+                    // char proxima[5];
+                    // fscanf(fd, "%s", proxima);
+                    // if (strcmp(proxima, "int") == 0)
+                    // {
+                    //     token.cat = ID_CONST;
+                    //     strcat(lexema, "\t");
+                    //     strcpy(token.lexema, proxima);
+                    // }
+                    // else
+                    // {
+                    //     token.cat = PAL_RESERV;
+                    //     token.codigo = CONST;
+                    // }
+
                     token.cat = PAL_RESERV;
                     token.codigo = CONST;
                 }
@@ -284,6 +285,11 @@ TOKEN AnaLex(FILE *fd)
                     token.cat = PAL_RESERV;
                     token.codigo = WHILE;
                 }
+                else if (strcmp("endwhile", lexema) == 0)
+                {
+                    token.cat = PAL_RESERV;
+                    token.codigo = ENDWHILE;
+                }
                 else if (strcmp("for", lexema) == 0)
                 {
                     token.cat = PAL_RESERV;
@@ -318,6 +324,11 @@ TOKEN AnaLex(FILE *fd)
                 {
                     token.cat = PAL_RESERV;
                     token.codigo = GETINT;
+                }
+                else if (strcmp("getreal", lexema) == 0)
+                {
+                    token.cat = PAL_RESERV;
+                    token.codigo = GETREAL;
                 }
                 else if (strcmp("getchar", lexema) == 0)
                 {

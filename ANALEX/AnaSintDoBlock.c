@@ -193,8 +193,7 @@ void block_def()
 
     while (tk.codigo != ENDBLOCK)
     {
-        break;
-        // cmd();
+        cmd();
     }
     consome(ENDBLOCK);
     printf("\nSAIU -> block_def\n");

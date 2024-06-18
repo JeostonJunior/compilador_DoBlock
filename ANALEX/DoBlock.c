@@ -122,6 +122,9 @@ int main()
             case WHILE:
                 printf("<PR, while>\n");
                 break;
+            case ENDWHILE:
+                printf("<PR, endwhile>\n");
+                break;
             case FOR:
                 printf("<PR, for>\n");
                 break;
@@ -148,6 +151,9 @@ int main()
                 break;
             case GETINT:
                 printf("<PR, getint>\n");
+                break;
+            case GETREAL:
+                printf("<PR, getreal>\n");
                 break;
             case PUTREAL:
                 printf("<PR, putreal>\n");
