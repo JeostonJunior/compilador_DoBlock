@@ -620,173 +620,182 @@ void op_rel()
     }
 }
 
+/*
+do (id [with id1 { , id2 }]  | cmd ) varying idx from expr1 
+(to | downto) expr2  | do (id [with id1 { , id2 }]  | cmd ) 
+while ( expr ) 
+| do (id [with id1 { , id2 }]  | cmd ) [for expr times ] 
+| if ( expr ) { cmd }{ elseif  ( expr ) { cmd } } [ else { cmd }] endif 
+| while ( expr ) { cmd } endwhile 
+| atrib   | goback  | getint id | getreal id  | getchar id  | putint id | putreal id  | putchar id       
+*/
 void cmd()
 {
     if (tk.cat == PAL_RESERV)
     {
         switch (tk.codigo)
         {
-        case DO:
-            consome(DO);
-            if (tk.cat == ID)
-            {
-                consome(ID);
-                if (tk.codigo == WITH)
+            case DO:
+                consome(DO);
+                if (tk.cat == ID)
                 {
-                    consome(WITH);
                     consome(ID);
-                    while (tk.codigo == VIRGULA)
+                    if (tk.codigo == WITH)
                     {
-                        consome(VIRGULA);
+                        consome(WITH);
                         consome(ID);
+                        while (tk.codigo == VIRGULA)
+                        {
+                            consome(VIRGULA);
+                            consome(ID);
+                        }
                     }
-                }
-                if (tk.codigo == VARYING)
-                {
-                    consome(VARYING);
-                    consome(ID);
-                    consome(FROM);
-                    expr();
-                    if (tk.codigo == TO)
+                    if (tk.codigo == VARYING)
                     {
-                        consome(TO);
+                        consome(VARYING);
+                        consome(ID);
+                        consome(FROM);
+                        expr();
+                        if (tk.codigo == TO)
+                        {
+                            consome(TO);
+                        }
+                        else if (tk.codigo == DOWNTO)
+                        {
+                            consome(DOWNTO);
+                        }
+                        else
+                        {
+                            errorSint(contLinha, "Esperado 'to' ou 'downto'");
+                        }
+                        expr();
                     }
-                    else if (tk.codigo == DOWNTO)
+                    else if (tk.codigo == WHILE)
                     {
-                        consome(DOWNTO);
+                        consome(WHILE);
+                        consome(ABRE_PAR);
+                        expr();
+                        consome(FECHA_PAR);
                     }
-                    else
+                    else if (tk.codigo == FOR)
                     {
-                        errorSint(contLinha, "Esperado 'to' ou 'downto'");
+                        consome(FOR);
+                        expr();
                     }
-                    expr();
                 }
-                else if (tk.codigo == WHILE)
+                else
                 {
-                    consome(WHILE);
-                    consome(ABRE_PAR);
-                    expr();
-                    consome(FECHA_PAR);
-                }
-                else if (tk.codigo == FOR)
-                {
-                    consome(FOR);
-                    expr();
-                }
-            }
-            else
-            {
-                cmd();
-                if (tk.codigo == VARYING)
-                {
-                    consome(VARYING);
-                    consome(ID);
-                    consome(FROM);
-                    expr();
-                    if (tk.codigo == TO)
+                    cmd();
+                    if (tk.codigo == VARYING)
                     {
-                        consome(TO);
+                        consome(VARYING);
+                        consome(ID);
+                        consome(FROM);
+                        expr();
+                        if (tk.codigo == TO)
+                        {
+                            consome(TO);
+                        }
+                        else if (tk.codigo == DOWNTO)
+                        {
+                            consome(DOWNTO);
+                        }
+                        else
+                        {
+                            errorSint(contLinha, "Esperado 'to' ou 'downto'");
+                        }
+                        expr();
                     }
-                    else if (tk.codigo == DOWNTO)
+                    else if (tk.codigo == WHILE)
                     {
-                        consome(DOWNTO);
+                        consome(WHILE);
+                        consome(ABRE_PAR);
+                        expr();
+                        consome(FECHA_PAR);
                     }
-                    else
+                    else if (tk.codigo == FOR)
                     {
-                        errorSint(contLinha, "Esperado 'to' ou 'downto'");
+                        consome(FOR);
+                        expr();
                     }
-                    expr();
                 }
-                else if (tk.codigo == WHILE)
-                {
-                    consome(WHILE);
-                    consome(ABRE_PAR);
-                    expr();
-                    consome(FECHA_PAR);
-                }
-                else if (tk.codigo == FOR)
-                {
-                    consome(FOR);
-                    expr();
-                }
-            }
-            break;
+                break;
 
-        case IF:
-            consome(IF);
-            consome(ABRE_PAR);
-            expr();
-            consome(FECHA_PAR);
-            consome(ABRE_CHAVE);
-            cmd();
-            consome(FECHA_CHAVE);
-            while (tk.codigo == ELSEIF)
-            {
-                consome(ELSEIF);
+            case IF:
+                consome(IF);
                 consome(ABRE_PAR);
                 expr();
                 consome(FECHA_PAR);
                 consome(ABRE_CHAVE);
                 cmd();
                 consome(FECHA_CHAVE);
-            }
-            if (tk.codigo == ELSE)
-            {
-                consome(ELSE);
+                while (tk.codigo == ELSEIF)
+                {
+                    consome(ELSEIF);
+                    consome(ABRE_PAR);
+                    expr();
+                    consome(FECHA_PAR);
+                    consome(ABRE_CHAVE);
+                    cmd();
+                    consome(FECHA_CHAVE);
+                }
+                if (tk.codigo == ELSE)
+                {
+                    consome(ELSE);
+                    consome(ABRE_CHAVE);
+                    cmd();
+                    consome(FECHA_CHAVE);
+                }
+                consome(ENDIF);
+                break;
+
+            case WHILE:
+                consome(WHILE);
+                consome(ABRE_PAR);
+                expr();
+                consome(FECHA_PAR);
                 consome(ABRE_CHAVE);
                 cmd();
                 consome(FECHA_CHAVE);
-            }
-            consome(ENDIF);
-            break;
+                consome(ENDWHILE);
+                break;
 
-        case WHILE:
-            consome(WHILE);
-            consome(ABRE_PAR);
-            expr();
-            consome(FECHA_PAR);
-            consome(ABRE_CHAVE);
-            cmd();
-            consome(FECHA_CHAVE);
-            consome(ENDWHILE);
-            break;
+            case GOBACK:
+                consome(GOBACK);
+                break;
 
-        case GOBACK:
-            consome(GOBACK);
-            break;
+            case GETINT:
+                consome(GETINT);
+                consome(ID);
+                break;
 
-        case GETINT:
-            consome(GETINT);
-            consome(ID);
-            break;
+            case GETREAL:
+                consome(GETREAL);
+                consome(ID);
+                break;
 
-        case GETREAL:
-            consome(GETREAL);
-            consome(ID);
-            break;
+            case GETCHAR:
+                consome(GETCHAR);
+                consome(ID);
+                break;
 
-        case GETCHAR:
-            consome(GETCHAR);
-            consome(ID);
-            break;
+            case PUTINT:
+                consome(PUTINT);
+                consome(ID);
+                break;
 
-        case PUTINT:
-            consome(PUTINT);
-            consome(ID);
-            break;
+            case PUTREAL:
+                consome(PUTREAL);
+                consome(ID);
+                break;
 
-        case PUTREAL:
-            consome(PUTREAL);
-            consome(ID);
-            break;
+            case PUTCHAR:
+                consome(PUTCHAR);
+                consome(ID);
+                break;
 
-        case PUTCHAR:
-            consome(PUTCHAR);
-            consome(ID);
-            break;
-
-        default:
-            errorSint(contLinha, "Comando inválido.");
+            default:
+                errorSint(contLinha, "Comando inválido.");
         }
     }
     else if (tk.cat == ID)
@@ -798,3 +807,4 @@ void cmd()
         errorSint(contLinha, "Comando inválido.");
     }
 }
+
