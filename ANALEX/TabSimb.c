@@ -73,3 +73,17 @@ int Buscar_tabela(char lexema[])
     }
     return -1;
 }
+  
+void Imprimir_tabela(TabIdef tabela_idef, int tamTab) {
+    printf("| %-20s | %-10s | %-6s | %-6s | %-10s | %-12s | %-10s | %-14s |\n",
+           "Nome ID", "Endereço", "Escopo", "Tipo", "Categoria", "Constante", "Escalar", "Status Ativo");
+    printf("|----------------------|------------|---------|---------|------------|--------------|------------|------------------|\n");
+
+    for (int i = 0; i < tamTab; i++) {
+        printf("| %-20s | %-10d | %-6d | %-6d | %-10s | %-12s | %-10s | %-14s |\n",
+               tabela_idef.tabela_simb[i].lexema, tabela_idef.tabela_simb[i].endereco,
+               tabela_idef.tabela_simb[i].escopo, tabela_idef.tabela_simb[i].tipo,
+               tabela_idef.tabela_simb[i].categoria, tabela_idef.tabela_simb[i].zombie ? "True" : "False",
+               tabela_idef.tabela_simb[i].endereco ? "True" : "False", tabela_idef.tabela_simb[i].zombie ? "True" : "False");
+    }
+}
