@@ -17,7 +17,7 @@ typedef
         int escopo;
         char categoria[TAM_CATEGORIA];
         bool zombie;
-        //int endereco;
+        int endereco;
 
     }TabSimb;
     
@@ -33,6 +33,7 @@ extern TabIdef tabela_idef;
 extern TOKEN tk;
 
 void Iniciar_tabela();
+void Imprimir_tabela(TabIdef, int tamTab);
 int Buscar_tabela(char lexema[]);
 int Buscar_escopo(char lexema[],int escopo);
 int Insercao_tabela(char lexema[],int escopo,int tipo, char categoria[TAM_CATEGORIA],bool zombie);
