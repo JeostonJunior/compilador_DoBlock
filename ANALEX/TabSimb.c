@@ -64,4 +64,12 @@ int Remover_ultimo()
     }
     return -1;
 }
-
+int Buscar_tabela(char lexema[])
+{
+    for(int i = 0; i < tabela_idef.tabela_simb; i++){
+        if(!(strcmp(lexema,tabela_idef.tabela_simb[i].lexema))){
+            return i;
+        }
+    }
+    return -1;
+}
