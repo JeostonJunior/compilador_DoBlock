@@ -11,10 +11,13 @@ FILE *fd;
 TOKEN tk;
 char TABS[200] = "";
 
+// TabIdef tabela_idef;
+
 void Analisador_sintatico()
 {
     fd = fopen("teste.dbk", "r");
 
+    // Iniciar_tabela();
     prog();
     if (tk.cat == FIM_PROG)
     {

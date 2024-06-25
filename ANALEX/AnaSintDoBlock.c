@@ -35,11 +35,12 @@ void prog()
 
     while (tk.cat == PAL_RESERV && tk.codigo == BLOCK)
     {
-        printf("[decl_block_prot][WHILE][Entrada]\n");
+        printf("[BLOCK][WHILE][Entrada]\n");
         decl_block_prot();
-        printf("[decl_block_prot][WHILE][Saida]\n");
+        printf("[BLOCK][WHILE][Saida]\n");
     }
 
+    printf("PROG - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
     if (!(tk.cat == PAL_RESERV && tk.codigo == MAIN))
     {
         errorSint(contLinha, "Declaracao de bloco main esperada.");
@@ -82,55 +83,59 @@ void decl_block_prot()
 {
     printf("\nENTROU -> decl_block_prot\n");
     consome(BLOCK);
-    consome(ID);
 
-    if (tk.codigo == WITH)
+    if (tk.codigo != MAIN)
     {
-        printf("[decl_block_prot][WITH][Entrada]\n\n");
-        consome(WITH);
+        consome(ID);
 
-        while (true)
+        if (tk.codigo == WITH)
         {
-            if (tk.cat == FIM_PROG || tk.codigo == BLOCK)
-            {
-                break;
-            }
+            printf("[decl_block_prot][WITH][Entrada]\n\n");
+            consome(WITH);
 
-            if (tk.codigo == REFERENCIA)
+            while (true)
             {
-                printf("[decl_block_prot][REFERENCIA][Entrada]\n");
-                consome(REFERENCIA);
-                printf("[decl_block_prot][REFERENCIA][Saida]\n\n");
-            }
+                if (tk.cat == FIM_PROG || tk.codigo == MAIN || tk.codigo == BLOCK)
+                {
+                    break;
+                }
 
-            tipo();
+                if (tk.codigo == REFERENCIA)
+                {
+                    printf("[decl_block_prot][REFERENCIA][Entrada]\n");
+                    consome(REFERENCIA);
+                    printf("[decl_block_prot][REFERENCIA][Saida]\n\n");
+                }
 
-            if (tk.codigo == ABRE_COL)
-            {
-                printf("[decl_block_prot][ABRE_COL][Entrada]\n");
-                consome(ABRE_COL);
-                printf("[decl_block_prot][ABRE_COL][Saida]\n\n");
+                tipo();
 
-                printf("[decl_block_prot][FECHA_COL][Entrada]\n");
-                consome(FECHA_COL);
-                printf("[decl_block_prot][FECHA_COL][Saida]\n\n");
+                if (tk.codigo == ABRE_COL)
+                {
+                    printf("[decl_block_prot][ABRE_COL][Entrada]\n");
+                    consome(ABRE_COL);
+                    printf("[decl_block_prot][ABRE_COL][Saida]\n\n");
+
+                    printf("[decl_block_prot][FECHA_COL][Entrada]\n");
+                    consome(FECHA_COL);
+                    printf("[decl_block_prot][FECHA_COL][Saida]\n\n");
+                }
+                if (tk.codigo == VIRGULA)
+                {
+                    printf("[decl_block_prot][VIRGULA][Entrada]\n");
+                    consome(VIRGULA);
+                    printf("[decl_block_prot][VIRGULA][Saida]\n\n");
+                }
             }
-            if (tk.codigo == VIRGULA)
-            {
-                printf("[decl_block_prot][VIRGULA][Entrada]\n");
-                consome(VIRGULA);
-                printf("[decl_block_prot][VIRGULA][Saida]\n\n");
-            }
+            printf("[decl_block_prot][WITH][Saida]\n\n");
         }
-        printf("[decl_block_prot][WITH][Saida]\n\n");
     }
+
     printf("\nSAIU -> decl_block_prot\n");
 }
 
 void block_main()
 {
     printf("\nENTROU -> block_main\n\n");
-    consome(BLOCK);
     consome(MAIN);
 
     while (tk.cat == PAL_RESERV && (tk.codigo == CONST || tk.codigo == INT || tk.codigo == CHAR || tk.codigo == REAL || tk.codigo == BOOL))
@@ -140,9 +145,9 @@ void block_main()
 
     while (tk.codigo != ENDBLOCK)
     {
-        // cmd();
+        cmd();
     }
-    consome(ENDBLOCK);
+    // consome(ENDBLOCK);
 
     printf("\nSAIU -> block_main\n");
 }
@@ -221,12 +226,12 @@ void decl_var()
     printf("\nENTROU -> decl_var\n");
     consome(ID);
 
-    if (tk.codigo == ABRE_COL)
+    while (tk.codigo == ABRE_COL)
     {
         printf("[decl_var][ABRE_COL][Entrada]\n\n");
 
         consome(ABRE_COL);
-        if (tk.cat == CONST_INT || tk.cat == ID_CONST)
+        if (tk.cat == CONST_INT || tk.cat == ID)
         {
             printf("[decl_var][CONST_INT][Entrada]\n\n");
             consome(tk.cat);
@@ -378,6 +383,8 @@ void op_rel()
 
 void cmd()
 {
+    printf("\nENTROU -> cmd\n\n");
+
     if (tk.cat == PAL_RESERV)
     {
         switch (tk.codigo)
