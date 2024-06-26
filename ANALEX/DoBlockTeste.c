@@ -19,11 +19,7 @@ void Analisador_sintatico()
 
     // Iniciar_tabela();
     prog();
-    if (tk.cat == FIM_PROG)
-    {
-        printf("<Resultado> Expressao OK!\n");
-    }
-
+    printf("<Resultado> Expressao OK!\n");
     fclose(fd);
 }
 

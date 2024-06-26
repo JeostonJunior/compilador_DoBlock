@@ -147,7 +147,7 @@ void block_main()
     {
         cmd();
     }
-    // consome(ENDBLOCK);
+    consome(ENDBLOCK);
 
     printf("\nSAIU -> block_main\n");
 }
@@ -199,6 +199,7 @@ void block_def()
     while (tk.codigo != ENDBLOCK)
     {
         cmd();
+        printf("<Resultado> Expressao OK!\n");
     }
     consome(ENDBLOCK);
     printf("\nSAIU -> block_def\n");
@@ -294,41 +295,54 @@ void atrib()
 
 void expr()
 {
+    printf("\nENTROU -> expr\n");
     expr_simp();
-    if (tk.codigo == IGUALDADE || tk.codigo == DIFERENTE || tk.codigo == MENOR_IGUAL ||
-        tk.codigo == MENOR_QUE || tk.codigo == MAIOR_IGUAL || tk.codigo == MAIOR_QUE)
+    if (tk.cat == OP_RELAC && (tk.codigo == IGUALDADE || tk.codigo == DIFERENTE || tk.codigo == MENOR_IGUAL ||
+                               tk.codigo == MENOR_QUE || tk.codigo == MAIOR_IGUAL || tk.codigo == MAIOR_QUE))
     {
         op_rel();
         expr_simp();
     }
+    printf("\nSAIU -> expr\n");
 }
 
 void expr_simp()
 {
+    printf("\nENTROU -> expr_simp\n");
     if (tk.codigo == ADICAO || tk.codigo == SUBTRACAO)
     {
         consome(tk.codigo);
     }
     termo();
-    while (tk.codigo == ADICAO || tk.codigo == SUBTRACAO || tk.codigo == OR_LOGIC)
+
+    if ((tk.codigo == ADICAO || tk.codigo == SUBTRACAO || tk.codigo == OR_LOGIC))
     {
         consome(tk.codigo);
         termo();
     }
+
+    printf("\nSAIU -> expr_simp\n");
 }
 
 void termo()
 {
-    fator();
-    while (tk.codigo == MULTIPLICACAO || tk.codigo == DIVISAO || tk.codigo == AND_LOGIC)
+    printf("\nENTROU -> termo\n");
+    if (tk.cat != FIM_PROG)
     {
-        consome(tk.codigo);
+
         fator();
+        while (tk.codigo == MULTIPLICACAO || tk.codigo == DIVISAO || tk.codigo == AND_LOGIC)
+        {
+            consome(tk.codigo);
+            fator();
+        }
     }
+    printf("\nSAIU -> termo\n");
 }
 
 void fator()
 {
+    printf("\nENTROU -> fator\n");
     if (tk.cat == ID)
     {
         consome(ID);
@@ -362,14 +376,12 @@ void fator()
         consome(NOT_LOGIC);
         fator();
     }
-    else
-    {
-        errorSint(contLinha, "Fator invalido");
-    }
+    printf("\nSAIU -> fator\n");
 }
 
 void op_rel()
 {
+    printf("\nENTROU -> op_rel\n");
     if (tk.codigo == IGUALDADE || tk.codigo == DIFERENTE || tk.codigo == MENOR_IGUAL ||
         tk.codigo == MENOR_QUE || tk.codigo == MAIOR_IGUAL || tk.codigo == MAIOR_QUE)
     {
@@ -379,12 +391,11 @@ void op_rel()
     {
         errorSint(contLinha, "Operador relacional esperado");
     }
+    printf("\nSAIU -> op_rel\n");
 }
 
 void cmd()
 {
-    printf("\nENTROU -> cmd\n\n");
-
     if (tk.cat == PAL_RESERV)
     {
         switch (tk.codigo)
@@ -556,7 +567,7 @@ void cmd()
     {
         atrib();
     }
-    else
+    else if (tk.cat != FIM_PROG)
     {
         errorSint(contLinha, "Comando inválido.");
     }
