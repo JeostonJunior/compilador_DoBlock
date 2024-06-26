@@ -13,6 +13,13 @@ TOKEN tk;
 
 char TABS[200] = "";
 
+void Analisador_lexico(FILE *fd)
+{
+    printf("\n[========== INICIO - Analise lexica ==========]\n");
+    processador_tokens(fd);
+    printf("\n[========== FIM - Analise sintatica ==========]\n");
+}
+
 void Analisador_sintatico()
 {
     // Iniciar_tabela();
@@ -32,8 +39,8 @@ int main()
         return 1;
     }
 
-    Analisador_sintatico();
-    // processador_tokens(fd);
+    // Analisador_lexico(fd);
+    // Analisador_sintatico();
 
     fclose(fd);
 
