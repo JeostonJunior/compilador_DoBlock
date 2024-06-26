@@ -1,0 +1,225 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+#include "AnaSintDoBlock.c"
+#include "FuncAuxDoBlock.c"
+#include "AnaSintDoBlock.h"
+#include "FuncAuxDoBlock.h"
+#include "TabSimb.h"
+FILE *fd;
+TOKEN tk;
+char TABS[200] = "";
+
+TabIdef tabela_idef;
+int tamTab;
+void Analisador_sintatico()
+{
+    fd = fopen("teste.dbk", "r");
+
+    Iniciar_tabela();
+    prog();
+    printf("<Resultado> Expressao OK!\n");
+    fclose(fd);
+}
+
+int main()
+{
+
+    printf("[========== Analise sintatica ==========]\n");
+    Analisador_sintatico();
+    Imprimir_tabela(tabela_idef, tabela_idef.tamTab);
+    return 0;
+}                        
+
+
+
+#ifndef TABSIMB_H
+#define TABSIMB_H
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include "AnaLexDoBlock.h"
+
+#define TAM_MAX_TAB 100
+#define TAM_CATEGORIA 3
+
+// Definição da estrutura TabSimb
+typedef struct {
+    char lexema[TAM_MAX_LEXEMA];
+    int tipo;
+    int escopo;
+    char categoria[TAM_CATEGORIA];
+    bool zombie;
+    int endereco;
+} TabSimb;
+
+// Definição da estrutura TabIdef
+typedef struct {
+    int tamTab;
+    TabSimb tabela_simb[TAM_MAX_TAB];
+} TabIdef;
+
+// Declaração de variáveis externas
+extern TabIdef tabela_idef;
+extern TOKEN tk;
+
+// Declaração de funções
+void Iniciar_tabela();
+void Imprimir_tabela(const TabIdef tabela_idef, int tamTab);
+int Buscar_tabela(const char lexema[]);
+int Buscar_escopo(const char lexema[], int escopo);
+int Insercao_tabela(const char lexema[], int escopo, int tipo, const char categoria[], bool zombie);
+int Remover_ultimo();
+
+#endif // TABSIMB_H
+
+#include "TabSimb.h"
+#include <stdbool.h>
+#include <string.h>
+
+TabIdef tabela_idef;
+
+// Inicializa a tabela de símbolos
+void Iniciar_tabela() {
+    tabela_idef.tamTab = 0;
+}
+
+// Busca um identificador pelo escopo na tabela de símbolos
+int Buscar_escopo(const char lexema[], int escopo) {
+    // Busca do fim para o início
+    for (int i = tabela_idef.tamTab - 1; i >= 0; i--) {
+        if (tabela_idef.tabela_simb[i].escopo == escopo && strcmp(tabela_idef.tabela_simb[i].lexema, lexema) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+// Evita a inserção duplicada na tabela de símbolos
+int Insercao_tabela(const char lexema[], int escopo, int tipo, const char categoria[], bool zombie) {
+    if (Buscar_escopo(lexema, escopo) != -1) {
+        printf("Erro: Identificador já declarado neste escopo.\n");
+        return -1;
+    }
+
+    if (tabela_idef.tamTab == TAM_MAX_TAB) {
+        printf("Erro: Tabela de símbolos cheia.\n");
+        return -1;
+    } else {
+        int i = tabela_idef.tamTab;
+
+        strcpy(tabela_idef.tabela_simb[i].lexema, lexema);
+
+        tabela_idef.tabela_simb[i].endereco = i;
+        tabela_idef.tabela_simb[i].escopo = escopo;
+        tabela_idef.tabela_simb[i].tipo = tipo;
+
+        strcpy(tabela_idef.tabela_simb[i].categoria, categoria);
+
+        tabela_idef.tabela_simb[i].zombie = zombie;
+        tabela_idef.tamTab++;
+
+        return i;
+    }
+}
+
+// Remove o último identificador inserido na tabela de símbolos
+int Remover_ultimo() {
+    if (tabela_idef.tamTab > 0) {
+        int index = tabela_idef.tamTab - 1;
+
+        tabela_idef.tabela_simb[index].lexema[0] = '\0';
+        tabela_idef.tabela_simb[index].escopo = 0;
+        tabela_idef.tabela_simb[index].tipo = 0;
+        tabela_idef.tabela_simb[index].categoria[0] = '\0';
+        tabela_idef.tabela_simb[index].zombie = false;
+        tabela_idef.tamTab--;
+
+        return index;
+    }
+    return -1;
+}
+
+// Busca um identificador na tabela de símbolos
+int Buscar_tabela(const char lexema[]) {
+    for (int i = 0; i < tabela_idef.tamTab; i++) {
+        if (strcmp(lexema, tabela_idef.tabela_simb[i].lexema) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void Imprimir_tabela(const TabIdef tabela_idef, int tamTab) {
+    printf("| %-20s | %-10s | %-6s | %-6s | %-10s | %-6s |\n",
+           "Nome ID", "Endereço", "Escopo", "Tipo", "Categoria", "Zombie");
+    printf("|----------------------|------------|--------|--------|------------|--------|\n");
+
+    for (int i = 0; i < tamTab; i++) {
+        printf("| %-20s | %-10d | %-6d | %-6d | %-10s | %-6s |\n",
+               tabela_idef.tabela_simb[i].lexema,
+               tabela_idef.tabela_simb[i].endereco,
+               tabela_idef.tabela_simb[i].escopo,
+               tabela_idef.tabela_simb[i].tipo,
+               tabela_idef.tabela_simb[i].categoria,
+               tabela_idef.tabela_simb[i].zombie ? "True" : "False");
+    }
+}
+
+void decl_var() {
+    printf("\nENTROU -> decl_var\n");
+    
+    // Salva o lexema do ID para adicionar na tabela de símbolos
+    char lexema[TAM_MAX_LEXEMA];
+    strcpy(lexema, tk.lexema);
+    
+    consome(ID);
+    
+    // Determina o tipo da variável
+    int tipo_var = tk.codigo; // Exemplo
+
+    // Adiciona a variável na tabela de símbolos
+    Insercao_tabela(lexema, 0, tipo_var, "var", false); // Ajuste os parâmetros conforme necessário
+    
+    while (tk.codigo == ABRE_COL) {
+        printf("[decl_var][ABRE_COL][Entrada]\n\n");
+
+        consome(ABRE_COL);
+        if (tk.cat == CONST_INT || tk.cat == ID) {
+            printf("[decl_var][CONST_INT][Entrada]\n\n");
+            consome(tk.cat);
+        }
+        consome(FECHA_COL);
+    }
+
+    if (tk.codigo == ATRIBUICAO) {
+        printf("[decl_var][ATRIBUICAO][Entrada]\n\n");
+        consome(ATRIBUICAO);
+        if (tk.cat == CONST_INT || tk.cat == CONST_FLOAT || tk.cat == CONST_CHAR || tk.cat == LITERAL) {
+            printf("[decl_var][ATRIBUICAO][CAT][Entrada]\n\n");
+            consome(tk.cat);
+        } else if (tk.codigo == ABRE_CHAVE) {
+            printf("[decl_var][ATRIBUICAO][ABRE_CHAVE][Entrada]\n\n");
+            consome(ABRE_CHAVE);
+            do {
+                if (tk.cat == CONST_INT || tk.cat == CONST_FLOAT || tk.cat == CONST_CHAR || tk.cat == LITERAL) {
+                    consome(tk.cat);
+                }
+                if (tk.codigo == VIRGULA) {
+                    consome(VIRGULA);
+                } else {
+                    break;
+                }
+            } while (true);
+            consome(FECHA_CHAVE);
+        } else {
+            printf("[decl_var][ATRIBUICAO][ERRO][Entrada]\n\n");
+            errorSint(contLinha, "Valor esperado após '='.");
+        }
+        printf("[decl_var][ATRIBUICAO][Saida] - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
+    }
+    printf("\nSAIU -> decl_var\n");
+}
+
