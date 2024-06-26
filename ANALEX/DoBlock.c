@@ -17,7 +17,7 @@ void Analisador_lexico(FILE *fd)
 {
     printf("\n[========== INICIO - Analise lexica ==========]\n");
     processador_tokens(fd);
-    printf("\n[========== FIM - Analise sintatica ==========]\n");
+    printf("\n[========== FIM - Analise lexica ==========]\n");
 }
 
 void Analisador_sintatico()
@@ -25,7 +25,7 @@ void Analisador_sintatico()
     // Iniciar_tabela();
     printf("\n[========== INICIO - Analise sintatica ==========]\n");
     prog();
-    printf("[========== FIM - Analise sintatica ==========]\n");
+    printf("\n[========== FIM - Analise sintatica ==========]\n");
 }
 
 int main()
