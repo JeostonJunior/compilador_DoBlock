@@ -2,8 +2,6 @@
 #include <stdbool.h>
 #include <string.h>
 
-TabIdef tabela_idef;
-
 // Inicializa a tabela de símbolos
 void Iniciar_tabela()
 {
@@ -92,7 +90,7 @@ int Buscar_tabela(char lexema[])
 void Imprimir_tabela(TabIdef tabela_idef, int tamTab)
 {
     printf("| %-20s | %-10s | %-6s | %-6s | %-10s | %-6s |\n",
-           "Nome ID", "Endereço", "Escopo", "Tipo", "Categoria", "Zombie");
+           "Nome ID", "Endereco", "Escopo", "Tipo", "Categoria", "Zombie");
     printf("|----------------------|------------|--------|--------|------------|--------|\n");
 
     for (int i = 0; i < tamTab; i++)

@@ -9,6 +9,7 @@
 extern TOKEN tk;
 extern FILE *fd;
 extern int contLinha;
+extern int escopoAtual;
 
 extern bool mostraArvore;
 extern char TABS[200];

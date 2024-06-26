@@ -30,6 +30,7 @@ typedef struct
 // Declaração de variáveis externas
 extern TabIdef tabela_idef;
 extern TOKEN tk;
+extern int escopoAtual;
 
 // Declaração de funções
 void Iniciar_tabela();

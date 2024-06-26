@@ -5,6 +5,12 @@
 #include "AnaLexDoBlock.c"
 #include "AnaLexDoBlock.h"
 #include "AnaSintDoBlock.h"
+#include "TabSimb.h"
+#include "TabSimb.c"
+
+TabIdef tabela_idef;
+
+int escopoAtual = 0;
 
 void consome(int esperado)
 {
@@ -25,6 +31,8 @@ void consome(int esperado)
 
 void prog()
 {
+    Iniciar_tabela();
+
     tk = AnaLex(fd);
 
     printf("PROG - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
@@ -57,6 +65,8 @@ void prog()
     {
         errorSint(contLinha, "Fim do Arquivo Esperado");
     }
+
+    Imprimir_tabela(tabela_idef, tabela_idef.tamTab);
 }
 
 void decl_list_var()
@@ -86,6 +96,7 @@ void decl_block_prot()
 
     if (tk.codigo != MAIN)
     {
+        escopoAtual++;
         consome(ID);
 
         if (tk.codigo == WITH)
@@ -128,6 +139,7 @@ void decl_block_prot()
             }
             printf("[decl_block_prot][WITH][Saida]\n\n");
         }
+        escopoAtual--;
     }
 
     printf("\nSAIU -> decl_block_prot\n");
@@ -137,6 +149,7 @@ void block_main()
 {
     printf("\nENTROU -> block_main\n\n");
     consome(MAIN);
+    escopoAtual++;
 
     while (tk.cat == PAL_RESERV && (tk.codigo == CONST || tk.codigo == INT || tk.codigo == CHAR || tk.codigo == REAL || tk.codigo == BOOL))
     {
@@ -148,6 +161,8 @@ void block_main()
         cmd();
     }
     consome(ENDBLOCK);
+
+    escopoAtual--;
 
     printf("\nSAIU -> block_main\n");
 }
@@ -225,7 +240,18 @@ void tipo()
 void decl_var()
 {
     printf("\nENTROU -> decl_var\n");
+    if (Buscar_escopo(tk.lexema, escopoAtual) != -1)
+    {
+        printf("[ERRO] Identificador '%s' já declarado no escopo atual.\n", tk.lexema);
+        errorSint(contLinha, "Identificador já declarado no escopo atual");
+    }
+
     consome(ID);
+
+    if (Insercao_tabela(tk.lexema, escopoAtual, tk.codigo /*tipo*/, "variavel", false) == -1)
+    {
+        printf("[ERRO] Não foi possível inserir o identificador na tabela de símbolos.\n");
+    }
 
     while (tk.codigo == ABRE_COL)
     {

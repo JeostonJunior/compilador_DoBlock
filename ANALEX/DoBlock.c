@@ -40,7 +40,7 @@ int main()
     }
 
     // Analisador_lexico(fd);
-    // Analisador_sintatico();
+    Analisador_sintatico();
 
     fclose(fd);
 
