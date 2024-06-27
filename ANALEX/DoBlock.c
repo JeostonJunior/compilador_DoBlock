@@ -39,7 +39,7 @@ int main()
         return 1;
     }
 
-    // Analisador_lexico(fd);
+    // Analisador_lexico(fd); É só um exemplo, o analisador lexico está dentro do sintatico
     Analisador_sintatico();
 
     fclose(fd);
