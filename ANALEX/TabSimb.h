@@ -6,8 +6,8 @@
 #include "AnaLexDoBlock.h"
 #include <stdbool.h>
 
-#define TAM_MAX_TAB 100
-#define TAM_CATEGORIA 3
+#define TAM_MAX_TAB 50
+#define TAM_CATEGORIA 4
 
 // Definição da estrutura TabSimb
 typedef struct
@@ -17,7 +17,6 @@ typedef struct
     int escopo;
     char categoria[TAM_CATEGORIA];
     bool zombie;
-    int endereco;
 } TabSimb;
 
 // Definição da estrutura TabIdef
@@ -31,6 +30,8 @@ typedef struct
 extern TabIdef tabela_idef;
 extern TOKEN tk;
 extern int escopoAtual;
+extern int tipoAtual;
+extern char catAtual;
 
 // Declaração de funções
 void Iniciar_tabela();

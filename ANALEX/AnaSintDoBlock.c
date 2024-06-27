@@ -5,37 +5,25 @@
 #include "AnaLexDoBlock.c"
 #include "AnaLexDoBlock.h"
 #include "AnaSintDoBlock.h"
-#include "TabSimb.h"
-#include "TabSimb.c"
-
-TabIdef tabela_idef;
-
-int escopoAtual = 0;
 
 void consome(int esperado)
 {
     if (tk.cat == esperado || tk.codigo == esperado)
     {
-        printf("[CONSOME][Entrada] - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
         tk = AnaLex(fd);
-        printf("[CONSOME][Saida] - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
     }
     else
     {
-        printf("[ERROR] - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
         char errMsg[100];
-        sprintf(errMsg, "Token inesperado. Esperado: %d, Encontrado: %d", esperado, tk.codigo);
         errorSint(contLinha, errMsg);
     }
 }
 
 void prog()
 {
-    Iniciar_tabela();
 
     tk = AnaLex(fd);
 
-    printf("PROG - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
     while (tk.cat == PAL_RESERV && (tk.codigo == CONST || tk.codigo == INT || tk.codigo == CHAR || tk.codigo == REAL || tk.codigo == BOOL))
     {
         decl_list_var();
@@ -43,12 +31,9 @@ void prog()
 
     while (tk.cat == PAL_RESERV && tk.codigo == BLOCK)
     {
-        printf("[BLOCK][WHILE][Entrada]\n");
         decl_block_prot();
-        printf("[BLOCK][WHILE][Saida]\n");
     }
 
-    printf("PROG - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
     if (!(tk.cat == PAL_RESERV && tk.codigo == MAIN))
     {
         errorSint(contLinha, "Declaracao de bloco main esperada.");
@@ -66,17 +51,16 @@ void prog()
         errorSint(contLinha, "Fim do Arquivo Esperado");
     }
 
-    Imprimir_tabela(tabela_idef, tabela_idef.tamTab);
+    printf("\n\t\t<EXPRESSAO OK>\n");
 }
 
 void decl_list_var()
 {
-    printf("\nENTROU -> decl_list_var\n");
-
     if (tk.codigo == CONST)
     {
         consome(CONST);
     }
+
     tipo();
     decl_var();
 
@@ -85,23 +69,18 @@ void decl_list_var()
         consome(VIRGULA);
         decl_var();
     }
-
-    printf("\nSAIU -> decl_list_var\n");
 }
 
 void decl_block_prot()
 {
-    printf("\nENTROU -> decl_block_prot\n");
     consome(BLOCK);
 
     if (tk.codigo != MAIN)
     {
-        escopoAtual++;
         consome(ID);
 
         if (tk.codigo == WITH)
         {
-            printf("[decl_block_prot][WITH][Entrada]\n\n");
             consome(WITH);
 
             while (true)
@@ -113,43 +92,28 @@ void decl_block_prot()
 
                 if (tk.codigo == REFERENCIA)
                 {
-                    printf("[decl_block_prot][REFERENCIA][Entrada]\n");
                     consome(REFERENCIA);
-                    printf("[decl_block_prot][REFERENCIA][Saida]\n\n");
                 }
 
                 tipo();
 
                 if (tk.codigo == ABRE_COL)
                 {
-                    printf("[decl_block_prot][ABRE_COL][Entrada]\n");
                     consome(ABRE_COL);
-                    printf("[decl_block_prot][ABRE_COL][Saida]\n\n");
-
-                    printf("[decl_block_prot][FECHA_COL][Entrada]\n");
                     consome(FECHA_COL);
-                    printf("[decl_block_prot][FECHA_COL][Saida]\n\n");
                 }
                 if (tk.codigo == VIRGULA)
                 {
-                    printf("[decl_block_prot][VIRGULA][Entrada]\n");
                     consome(VIRGULA);
-                    printf("[decl_block_prot][VIRGULA][Saida]\n\n");
                 }
             }
-            printf("[decl_block_prot][WITH][Saida]\n\n");
         }
-        escopoAtual--;
     }
-
-    printf("\nSAIU -> decl_block_prot\n");
 }
 
 void block_main()
 {
-    printf("\nENTROU -> block_main\n\n");
     consome(MAIN);
-    escopoAtual++;
 
     while (tk.cat == PAL_RESERV && (tk.codigo == CONST || tk.codigo == INT || tk.codigo == CHAR || tk.codigo == REAL || tk.codigo == BOOL))
     {
@@ -161,15 +125,10 @@ void block_main()
         cmd();
     }
     consome(ENDBLOCK);
-
-    escopoAtual--;
-
-    printf("\nSAIU -> block_main\n");
 }
 
 void block_def()
 {
-    printf("\nENTROU -> block_def\n");
     consome(BLOCK);
     consome(ID);
 
@@ -194,6 +153,7 @@ void block_def()
             consome(VIRGULA);
             tipo();
             consome(ID);
+
             if (tk.codigo == ABRE_COL)
             {
                 consome(ABRE_COL);
@@ -214,53 +174,32 @@ void block_def()
     while (tk.codigo != ENDBLOCK)
     {
         cmd();
-        printf("<Resultado> Expressao OK!\n");
     }
     consome(ENDBLOCK);
-    printf("\nSAIU -> block_def\n");
 }
 
 void tipo()
 {
-    printf("\nENTROU -> tipo\n");
-
     if (tk.codigo == CHAR || tk.codigo == INT || tk.codigo == REAL || tk.codigo == BOOL)
     {
-        printf("[tipo][COD][Entrada]\n\n");
         consome(tk.codigo);
     }
     else
     {
-        printf("[tipo][ERROR][Entrada]\n\n");
         errorSint(contLinha, "Tipo invalido");
     }
-    printf("\nSAIU -> tipo\n");
 }
 
 void decl_var()
 {
-    printf("\nENTROU -> decl_var\n");
-    if (Buscar_escopo(tk.lexema, escopoAtual) != -1)
-    {
-        printf("[ERRO] Identificador '%s' já declarado no escopo atual.\n", tk.lexema);
-        errorSint(contLinha, "Identificador já declarado no escopo atual");
-    }
-
     consome(ID);
-
-    if (Insercao_tabela(tk.lexema, escopoAtual, tk.codigo /*tipo*/, "variavel", false) == -1)
-    {
-        printf("[ERRO] Não foi possível inserir o identificador na tabela de símbolos.\n");
-    }
 
     while (tk.codigo == ABRE_COL)
     {
-        printf("[decl_var][ABRE_COL][Entrada]\n\n");
 
         consome(ABRE_COL);
         if (tk.cat == CONST_INT || tk.cat == ID)
         {
-            printf("[decl_var][CONST_INT][Entrada]\n\n");
             consome(tk.cat);
         }
         consome(FECHA_COL);
@@ -268,16 +207,13 @@ void decl_var()
 
     if (tk.codigo == ATRIBUICAO)
     {
-        printf("[decl_var][ATRIBUICAO][Entrada]\n\n");
         consome(ATRIBUICAO);
         if (tk.cat == CONST_INT || tk.cat == CONST_FLOAT || tk.cat == CONST_CHAR || tk.cat == LITERAL)
         {
-            printf("[decl_var][ATRIBUICAO][CAT][Entrada]\n\n");
             consome(tk.cat);
         }
         else if (tk.codigo == ABRE_CHAVE)
         {
-            printf("[decl_var][ATRIBUICAO][ABRE_CHAVE][Entrada]\n\n");
             consome(ABRE_CHAVE);
             do
             {
@@ -298,17 +234,15 @@ void decl_var()
         }
         else
         {
-            printf("[decl_var][ATRIBUICAO][ERRO][Entrada]\n\n");
             errorSint(contLinha, "Valor esperado após '='.");
         }
-        printf("[decl_var][ATRIBUICAO][Saida] - Cat: %d | Cod: %d | Lex: %s | Float: %0.2f | Int: %d\n", tk.cat, tk.codigo, tk.lexema, tk.valFloat, tk.valInt);
     }
-    printf("\nSAIU -> decl_var\n");
 }
 
 void atrib()
 {
     consome(ID);
+
     while (tk.codigo == ABRE_COL)
     {
         consome(ABRE_COL);
@@ -321,7 +255,6 @@ void atrib()
 
 void expr()
 {
-    printf("\nENTROU -> expr\n");
     expr_simp();
     if (tk.cat == OP_RELAC && (tk.codigo == IGUALDADE || tk.codigo == DIFERENTE || tk.codigo == MENOR_IGUAL ||
                                tk.codigo == MENOR_QUE || tk.codigo == MAIOR_IGUAL || tk.codigo == MAIOR_QUE))
@@ -329,12 +262,10 @@ void expr()
         op_rel();
         expr_simp();
     }
-    printf("\nSAIU -> expr\n");
 }
 
 void expr_simp()
 {
-    printf("\nENTROU -> expr_simp\n");
     if (tk.codigo == ADICAO || tk.codigo == SUBTRACAO)
     {
         consome(tk.codigo);
@@ -346,13 +277,11 @@ void expr_simp()
         consome(tk.codigo);
         termo();
     }
-
-    printf("\nSAIU -> expr_simp\n");
 }
 
 void termo()
 {
-    printf("\nENTROU -> termo\n");
+
     if (tk.cat != FIM_PROG)
     {
 
@@ -363,15 +292,15 @@ void termo()
             fator();
         }
     }
-    printf("\nSAIU -> termo\n");
 }
 
 void fator()
 {
-    printf("\nENTROU -> fator\n");
+
     if (tk.cat == ID)
     {
         consome(ID);
+
         while (tk.codigo == ABRE_COL)
         {
             consome(ABRE_COL);
@@ -402,12 +331,11 @@ void fator()
         consome(NOT_LOGIC);
         fator();
     }
-    printf("\nSAIU -> fator\n");
 }
 
 void op_rel()
 {
-    printf("\nENTROU -> op_rel\n");
+
     if (tk.codigo == IGUALDADE || tk.codigo == DIFERENTE || tk.codigo == MENOR_IGUAL ||
         tk.codigo == MENOR_QUE || tk.codigo == MAIOR_IGUAL || tk.codigo == MAIOR_QUE)
     {
@@ -417,7 +345,6 @@ void op_rel()
     {
         errorSint(contLinha, "Operador relacional esperado");
     }
-    printf("\nSAIU -> op_rel\n");
 }
 
 void cmd()
@@ -431,10 +358,12 @@ void cmd()
             if (tk.cat == ID)
             {
                 consome(ID);
+
                 if (tk.codigo == WITH)
                 {
                     consome(WITH);
                     consome(ID);
+
                     while (tk.codigo == VIRGULA)
                     {
                         consome(VIRGULA);
@@ -445,6 +374,7 @@ void cmd()
                 {
                     consome(VARYING);
                     consome(ID);
+
                     consome(FROM);
                     expr();
                     if (tk.codigo == TO)
@@ -481,6 +411,7 @@ void cmd()
                 {
                     consome(VARYING);
                     consome(ID);
+
                     consome(FROM);
                     expr();
                     if (tk.codigo == TO)
@@ -558,6 +489,7 @@ void cmd()
         case GETINT:
             consome(GETINT);
             consome(ID);
+
             break;
 
         case GETREAL:
@@ -568,21 +500,25 @@ void cmd()
         case GETCHAR:
             consome(GETCHAR);
             consome(ID);
+
             break;
 
         case PUTINT:
             consome(PUTINT);
             consome(ID);
+
             break;
 
         case PUTREAL:
             consome(PUTREAL);
             consome(ID);
+
             break;
 
         case PUTCHAR:
             consome(PUTCHAR);
             consome(ID);
+
             break;
 
         default:

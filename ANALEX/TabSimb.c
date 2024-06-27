@@ -6,6 +6,7 @@
 void Iniciar_tabela()
 {
     tabela_idef.tamTab = 0;
+    escopoAtual = 0; // Escopo global
 }
 
 // Busca um identificador pelo escopo na tabela de símbolos
@@ -23,11 +24,11 @@ int Buscar_escopo(char lexema[], int escopo)
 }
 
 // Evita a inserção duplicada na tabela de símbolos
-int Insercao_tabela(char lexema[], int escopo, int tipo, char categoria[TAM_CATEGORIA], bool zombie)
+int Insercao_tabela(char lexema[], int tipo, int escopo, char categoria[TAM_CATEGORIA], bool zombie)
 {
     if (Buscar_escopo(lexema, escopo) != -1)
     {
-        printf("Erro: Identificador já declarado neste escopo.\n");
+        printf("Erro: Identificador '%s' já declarado neste escopo.\n", lexema);
         return -1;
     }
 
@@ -36,23 +37,17 @@ int Insercao_tabela(char lexema[], int escopo, int tipo, char categoria[TAM_CATE
         printf("Erro: Tabela de símbolos cheia.\n");
         return -1;
     }
-    else
-    {
-        int i = tabela_idef.tamTab;
 
-        strcpy(tabela_idef.tabela_simb[i].lexema, lexema);
+    int i = tabela_idef.tamTab;
 
-        tabela_idef.tabela_simb[i].endereco = i;
-        tabela_idef.tabela_simb[i].escopo = escopo;
-        tabela_idef.tabela_simb[i].tipo = tipo;
+    strcpy(tabela_idef.tabela_simb[i].lexema, lexema);
+    tabela_idef.tabela_simb[i].tipo = tipo;
+    tabela_idef.tabela_simb[i].escopo = escopo;
+    strcpy(tabela_idef.tabela_simb[i].categoria, categoria);
+    tabela_idef.tabela_simb[i].zombie = zombie;
+    tabela_idef.tamTab++;
 
-        strcpy(tabela_idef.tabela_simb[i].categoria, categoria);
-
-        tabela_idef.tabela_simb[i].zombie = zombie;
-        tabela_idef.tamTab++;
-
-        return i;
-    }
+    return i;
 }
 
 // Remove o último identificador inserido na tabela de símbolos
@@ -87,19 +82,19 @@ int Buscar_tabela(char lexema[])
     return -1;
 }
 
+// Imprime a tabela de símbolos
 void Imprimir_tabela(TabIdef tabela_idef, int tamTab)
 {
-    printf("| %-20s | %-10s | %-6s | %-6s | %-10s | %-6s |\n",
-           "Nome ID", "Endereco", "Escopo", "Tipo", "Categoria", "Zombie");
-    printf("|----------------------|------------|--------|--------|------------|--------|\n");
+    printf("| %-20s | %-6s | %-6s | %-10s | %-6s |\n",
+           "Nome ID", "Tipo", "Escopo", "Categoria", "Zombie");
+    printf("|----------------------|--------|--------|------------|--------|\n");
 
     for (int i = 0; i < tamTab; i++)
     {
-        printf("| %-20s | %-10d | %-6d | %-6d | %-10s | %-6s |\n",
+        printf("| %-20s | %-6d | %-6d | %-10s | %-6s |\n",
                tabela_idef.tabela_simb[i].lexema,
-               tabela_idef.tabela_simb[i].endereco,
-               tabela_idef.tabela_simb[i].escopo,
                tabela_idef.tabela_simb[i].tipo,
+               tabela_idef.tabela_simb[i].escopo,
                tabela_idef.tabela_simb[i].categoria,
                tabela_idef.tabela_simb[i].zombie ? "True" : "False");
     }

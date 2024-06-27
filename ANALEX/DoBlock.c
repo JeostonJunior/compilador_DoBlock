@@ -35,7 +35,7 @@ int main()
 
     if (fd == NULL)
     {
-        fprintf(stderr, "Error ao abrir o arquivo.\n");
+        fprintf(stderr, "\nError ao abrir o arquivo.\n");
         return 1;
     }
 
