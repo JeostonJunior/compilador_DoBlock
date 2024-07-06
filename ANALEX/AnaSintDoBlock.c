@@ -138,10 +138,10 @@ void block_def()
         tipo();
         consome(ID);
 
-        if (tk.codigo == ABRE_COL)
+        while (tk.codigo == ABRE_COL)
         {
             consome(ABRE_COL);
-            if (tk.cat == CONST_INT || tk.cat == ID_CONST)
+            if (tk.cat == CONST_INT || tk.cat == ID)
             {
                 consome(tk.cat);
             }
@@ -157,7 +157,7 @@ void block_def()
             if (tk.codigo == ABRE_COL)
             {
                 consome(ABRE_COL);
-                if (tk.cat == CONST_INT || tk.cat == ID_CONST)
+                if (tk.cat == CONST_INT || tk.cat == ID)
                 {
                     consome(tk.cat);
                 }
