@@ -15,6 +15,7 @@ void consome(int esperado)
     else
     {
         char errMsg[100];
+        sprintf(errMsg, "Token inesperado. Esperado: %d, Encontrado: %d", esperado, tk.codigo);
         errorSint(contLinha, errMsg);
     }
 }
@@ -31,6 +32,7 @@ void prog()
 
     while (tk.cat == PAL_RESERV && tk.codigo == BLOCK)
     {
+
         decl_block_prot();
     }
 
@@ -50,17 +52,15 @@ void prog()
     {
         errorSint(contLinha, "Fim do Arquivo Esperado");
     }
-
-    printf("\n\t\t<EXPRESSAO OK>\n");
 }
 
 void decl_list_var()
 {
+
     if (tk.codigo == CONST)
     {
         consome(CONST);
     }
-
     tipo();
     decl_var();
 
@@ -73,14 +73,17 @@ void decl_list_var()
 
 void decl_block_prot()
 {
+
     consome(BLOCK);
 
     if (tk.codigo != MAIN)
     {
+
         consome(ID);
 
         if (tk.codigo == WITH)
         {
+
             consome(WITH);
 
             while (true)
@@ -92,6 +95,7 @@ void decl_block_prot()
 
                 if (tk.codigo == REFERENCIA)
                 {
+
                     consome(REFERENCIA);
                 }
 
@@ -99,7 +103,9 @@ void decl_block_prot()
 
                 if (tk.codigo == ABRE_COL)
                 {
+
                     consome(ABRE_COL);
+
                     consome(FECHA_COL);
                 }
                 if (tk.codigo == VIRGULA)
@@ -141,10 +147,12 @@ void block_def()
         while (tk.codigo == ABRE_COL)
         {
             consome(ABRE_COL);
+
             if (tk.cat == CONST_INT || tk.cat == ID)
             {
                 consome(tk.cat);
             }
+
             consome(FECHA_COL);
         }
 
@@ -153,7 +161,6 @@ void block_def()
             consome(VIRGULA);
             tipo();
             consome(ID);
-
             if (tk.codigo == ABRE_COL)
             {
                 consome(ABRE_COL);
@@ -180,18 +187,22 @@ void block_def()
 
 void tipo()
 {
+
     if (tk.codigo == CHAR || tk.codigo == INT || tk.codigo == REAL || tk.codigo == BOOL)
     {
+
         consome(tk.codigo);
     }
     else
     {
+
         errorSint(contLinha, "Tipo invalido");
     }
 }
 
 void decl_var()
 {
+
     consome(ID);
 
     while (tk.codigo == ABRE_COL)
@@ -242,7 +253,6 @@ void decl_var()
 void atrib()
 {
     consome(ID);
-
     while (tk.codigo == ABRE_COL)
     {
         consome(ABRE_COL);
@@ -266,13 +276,13 @@ void expr()
 
 void expr_simp()
 {
-    if (tk.codigo == ADICAO || tk.codigo == SUBTRACAO)
+    if (tk.cat == OP_ARIT && (tk.codigo == ADICAO || tk.codigo == SUBTRACAO))
     {
         consome(tk.codigo);
     }
     termo();
 
-    if ((tk.codigo == ADICAO || tk.codigo == SUBTRACAO || tk.codigo == OR_LOGIC))
+    if ((tk.cat == OP_ARIT && tk.codigo == ADICAO || tk.codigo == SUBTRACAO) || (tk.cat == OP_LOGIC && tk.codigo == OR_LOGIC))
     {
         consome(tk.codigo);
         termo();
@@ -281,12 +291,11 @@ void expr_simp()
 
 void termo()
 {
-
     if (tk.cat != FIM_PROG)
     {
 
         fator();
-        while (tk.codigo == MULTIPLICACAO || tk.codigo == DIVISAO || tk.codigo == AND_LOGIC)
+        while ((tk.cat == OP_ARIT && tk.codigo == MULTIPLICACAO || tk.codigo == DIVISAO) || (tk.cat == OP_LOGIC && tk.codigo == AND_LOGIC))
         {
             consome(tk.codigo);
             fator();
@@ -296,11 +305,9 @@ void termo()
 
 void fator()
 {
-
     if (tk.cat == ID)
     {
         consome(ID);
-
         while (tk.codigo == ABRE_COL)
         {
             consome(ABRE_COL);
@@ -335,7 +342,6 @@ void fator()
 
 void op_rel()
 {
-
     if (tk.codigo == IGUALDADE || tk.codigo == DIFERENTE || tk.codigo == MENOR_IGUAL ||
         tk.codigo == MENOR_QUE || tk.codigo == MAIOR_IGUAL || tk.codigo == MAIOR_QUE)
     {
@@ -349,6 +355,7 @@ void op_rel()
 
 void cmd()
 {
+
     if (tk.cat == PAL_RESERV)
     {
         switch (tk.codigo)
@@ -358,12 +365,10 @@ void cmd()
             if (tk.cat == ID)
             {
                 consome(ID);
-
                 if (tk.codigo == WITH)
                 {
                     consome(WITH);
                     consome(ID);
-
                     while (tk.codigo == VIRGULA)
                     {
                         consome(VIRGULA);
@@ -374,7 +379,6 @@ void cmd()
                 {
                     consome(VARYING);
                     consome(ID);
-
                     consome(FROM);
                     expr();
                     if (tk.codigo == TO)
@@ -411,7 +415,6 @@ void cmd()
                 {
                     consome(VARYING);
                     consome(ID);
-
                     consome(FROM);
                     expr();
                     if (tk.codigo == TO)
@@ -445,32 +448,58 @@ void cmd()
 
         case IF:
             consome(IF);
+
             consome(ABRE_PAR);
             expr();
             consome(FECHA_PAR);
-            consome(ABRE_CHAVE);
-            cmd();
-            consome(FECHA_CHAVE);
-            while (tk.codigo == ELSEIF)
+
+            if (tk.codigo == ABRE_CHAVE)
             {
-                consome(ELSEIF);
-                consome(ABRE_PAR);
-                expr();
-                consome(FECHA_PAR);
                 consome(ABRE_CHAVE);
+
                 cmd();
                 consome(FECHA_CHAVE);
             }
+            else
+            {
+                cmd();
+            }
+
+            while (tk.codigo == ELSEIF)
+            {
+                if (tk.codigo == ABRE_CHAVE)
+                {
+                    consome(ELSEIF);
+                    consome(ABRE_PAR);
+                    expr();
+                    consome(FECHA_PAR);
+                    consome(ABRE_CHAVE);
+                    cmd();
+                    consome(FECHA_CHAVE);
+                }
+                else
+                {
+                    cmd();
+                }
+            }
+
             if (tk.codigo == ELSE)
             {
                 consome(ELSE);
-                consome(ABRE_CHAVE);
-                cmd();
-                consome(FECHA_CHAVE);
+                if (tk.codigo == ABRE_CHAVE)
+                {
+                    consome(ABRE_CHAVE);
+                    cmd();
+                    consome(FECHA_CHAVE);
+                }
+                else
+                {
+                    cmd();
+                }
             }
+
             consome(ENDIF);
             break;
-
         case WHILE:
             consome(WHILE);
             consome(ABRE_PAR);
@@ -489,7 +518,6 @@ void cmd()
         case GETINT:
             consome(GETINT);
             consome(ID);
-
             break;
 
         case GETREAL:
@@ -500,25 +528,21 @@ void cmd()
         case GETCHAR:
             consome(GETCHAR);
             consome(ID);
-
             break;
 
         case PUTINT:
             consome(PUTINT);
             consome(ID);
-
             break;
 
         case PUTREAL:
             consome(PUTREAL);
             consome(ID);
-
             break;
 
         case PUTCHAR:
             consome(PUTCHAR);
             consome(ID);
-
             break;
 
         default:
