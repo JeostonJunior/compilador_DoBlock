@@ -7,7 +7,7 @@
 #include <stdbool.h>
 
 #define TAM_MAX_TAB 100
-#define TAM_CATEGORIA 20
+#define TAM_CATEGORIA 4
 
 // Definição da estrutura TabSimb
 typedef struct

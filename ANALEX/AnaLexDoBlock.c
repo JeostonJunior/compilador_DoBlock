@@ -168,11 +168,13 @@ TOKEN AnaLex(FILE *fd)
             }
             else if (c == '\n')
             {
+                contLinha++;
                 estado = 0;
             }
             else if (c == EOF)
             {
                 token.cat = FIM_PROG;
+                contLinha = 1;
                 return token;
             }
             else

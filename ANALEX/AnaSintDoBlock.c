@@ -173,8 +173,6 @@ void tipo() {
 }
 
 void decl_var() {
-    printf("\nENTROU -> decl_var\n");
-
     // Captura o lexema antes de consumir
     char lexema[TAM_MAX_LEXEMA];
     strncpy(lexema, tk.lexema, TAM_MAX_LEXEMA - 1);
@@ -227,8 +225,6 @@ void decl_var() {
             errorSint(contLinha, "Valor esperado após '='.");
         }
     }
-
-    printf("\nSAIU -> decl_var\n");
 }
 
 void atrib()
