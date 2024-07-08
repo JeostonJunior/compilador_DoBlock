@@ -27,6 +27,7 @@ void Analisador_sintatico()
     prog();
     printf("\n[========== FIM - Analise sintatica ==========]\n");
 
+    /*
     // Testando outras funções da tabela de símbolos
     const char *lex = "DIM_COL";
     int resultado = Buscar_tabela(lex);
@@ -37,7 +38,7 @@ void Analisador_sintatico()
         printf("Lexema não encontrado.\n");
     }
     int result = Remover_ultimo(); //0 é removido 
-    printf("%d",result);
+    printf("%d",result);*/
 }
 
 int main()
