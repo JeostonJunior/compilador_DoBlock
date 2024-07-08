@@ -43,8 +43,8 @@ void Analisador_sintatico()
 int main()
 {
 
-    fd = fopen("C:/Users/guilh/OneDrive/Documentos/DoBlock2/compilador_DoBlock/ANALEX/teste.dbk", "r");
-    // fd = fopen("teste.dbk", "r");
+    //fd = fopen("C:/Users/guilh/OneDrive/Documentos/DoBlock2/compilador_DoBlock/ANALEX/teste.dbk", "r");
+     fd = fopen("teste.dbk", "r");
     if (fd == NULL)
     {
         fprintf(stderr, "\nError ao abrir o arquivo.\n");
