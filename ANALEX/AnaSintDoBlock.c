@@ -5,251 +5,230 @@
 #include "AnaLexDoBlock.c"
 #include "AnaLexDoBlock.h"
 #include "AnaSintDoBlock.h"
+#include "TabSimb.h"
+#include "TabSimb.c"
 
-void consome(int esperado)
-{
-    if (tk.cat == esperado || tk.codigo == esperado)
-    {
+TabIdef tabela_idef;
+int escopoAtual = 0;
+// unsigned, pois esta comparando variáveis tipo assinado com uma variável de tipo não assinado 
+void consome(int esperado) {
+    if ((unsigned int)tk.cat == (unsigned int)esperado || (unsigned int)tk.codigo == (unsigned int)esperado) {
         tk = AnaLex(fd);
-    }
-    else
-    {
+    } else {
         char errMsg[100];
         sprintf(errMsg, "Token inesperado. Esperado: %d, Encontrado: %d", esperado, tk.codigo);
         errorSint(contLinha, errMsg);
     }
 }
 
-void prog()
-{
-
+void prog() {
+    Iniciar_tabela();
     tk = AnaLex(fd);
 
-    while (tk.cat == PAL_RESERV && (tk.codigo == CONST || tk.codigo == INT || tk.codigo == CHAR || tk.codigo == REAL || tk.codigo == BOOL))
-    {
+    while (tk.cat == PAL_RESERV && (tk.codigo == CONST || tk.codigo == INT || tk.codigo == CHAR || tk.codigo == REAL || tk.codigo == BOOL)) {
         decl_list_var();
     }
 
-    while (tk.cat == PAL_RESERV && tk.codigo == BLOCK)
-    {
-
+    while (tk.cat == PAL_RESERV && tk.codigo == BLOCK) {
         decl_block_prot();
     }
 
-    if (!(tk.cat == PAL_RESERV && tk.codigo == MAIN))
-    {
+    if (!(tk.cat == PAL_RESERV && tk.codigo == MAIN)) {
         errorSint(contLinha, "Declaracao de bloco main esperada.");
     }
 
     block_main();
 
-    while (tk.cat == PAL_RESERV && tk.codigo == BLOCK)
-    {
+    while (tk.cat == PAL_RESERV && tk.codigo == BLOCK) {
         block_def();
     }
 
-    if (tk.cat != FIM_PROG)
-    {
+    if (tk.cat != FIM_PROG) {
         errorSint(contLinha, "Fim do Arquivo Esperado");
     }
 
     printf("EXPRESSÃO OK");
+    Imprimir_tabela();
 }
 
-void decl_list_var()
-{
-
-    if (tk.codigo == CONST)
-    {
+void decl_list_var() {
+    if (tk.codigo == CONST) {
         consome(CONST);
     }
     tipo();
     decl_var();
 
-    while (tk.codigo == VIRGULA)
-    {
+    while (tk.codigo == VIRGULA) {
         consome(VIRGULA);
         decl_var();
     }
 }
 
-void decl_block_prot()
-{
-
+void decl_block_prot() {
     consome(BLOCK);
 
-    if (tk.codigo != MAIN)
-    {
-
+    if (tk.codigo != MAIN) {
+        escopoAtual++;
         consome(ID);
 
-        if (tk.codigo == WITH)
-        {
-
+        if (tk.codigo == WITH) {
             consome(WITH);
 
-            while (true)
-            {
-                if (tk.cat == FIM_PROG || tk.codigo == MAIN || tk.codigo == BLOCK)
-                {
+            while (true) {
+                if (tk.cat == FIM_PROG || tk.codigo == MAIN || tk.codigo == BLOCK) {
                     break;
                 }
 
-                if (tk.codigo == REFERENCIA)
-                {
-
+                if (tk.codigo == REFERENCIA) {
                     consome(REFERENCIA);
                 }
 
                 tipo();
 
-                if (tk.codigo == ABRE_COL)
-                {
-
+                if (tk.codigo == ABRE_COL) {
                     consome(ABRE_COL);
-
                     consome(FECHA_COL);
                 }
-                if (tk.codigo == VIRGULA)
-                {
+
+                if (tk.codigo == VIRGULA) {
                     consome(VIRGULA);
                 }
             }
         }
+        escopoAtual--;
     }
 }
 
-void block_main()
-{
+void block_main() {
     consome(MAIN);
-
-    while (tk.cat == PAL_RESERV && (tk.codigo == CONST || tk.codigo == INT || tk.codigo == CHAR || tk.codigo == REAL || tk.codigo == BOOL))
-    {
+    escopoAtual++;
+    
+    while (tk.cat == PAL_RESERV && (tk.codigo == CONST || tk.codigo == INT || tk.codigo == CHAR || tk.codigo == REAL || tk.codigo == BOOL)) {
         decl_list_var();
     }
 
-    while (tk.codigo != ENDBLOCK)
-    {
+    while (tk.codigo != ENDBLOCK) {
         cmd();
     }
+
     consome(ENDBLOCK);
+    escopoAtual--;
 }
 
-void block_def()
-{
+void block_def() {
     consome(BLOCK);
+    escopoAtual++;  // Enter a new block scope
     consome(ID);
 
-    if (tk.codigo == WITH)
-    {
+    if (tk.codigo == WITH) {
         consome(WITH);
         tipo();
         consome(ID);
 
-        while (tk.codigo == ABRE_COL)
-        {
+        while (tk.codigo == ABRE_COL) {
             consome(ABRE_COL);
 
-            if (tk.cat == CONST_INT || tk.cat == ID)
-            {
+            if (tk.cat == CONST_INT || tk.cat == ID) {
                 consome(tk.cat);
             }
 
             consome(FECHA_COL);
         }
 
-        while (tk.codigo == VIRGULA)
-        {
+        while (tk.codigo == VIRGULA) {
             consome(VIRGULA);
             tipo();
             consome(ID);
-            if (tk.codigo == ABRE_COL)
-            {
+
+            if (tk.codigo == ABRE_COL) {
                 consome(ABRE_COL);
-                if (tk.cat == CONST_INT || tk.cat == ID)
-                {
+
+                if (tk.cat == CONST_INT || tk.cat == ID) {
                     consome(tk.cat);
                 }
+
                 consome(FECHA_COL);
             }
         }
     }
 
-    while (tk.cat == PAL_RESERV && (tk.codigo == CONST || tk.codigo == INT || tk.codigo == CHAR || tk.codigo == REAL || tk.codigo == BOOL))
-    {
+    while (tk.cat == PAL_RESERV && (tk.codigo == CONST || tk.codigo == INT || tk.codigo == CHAR || tk.codigo == REAL || tk.codigo == BOOL)) {
         decl_list_var();
     }
 
-    while (tk.codigo != ENDBLOCK)
-    {
+    while (tk.codigo != ENDBLOCK) {
         cmd();
     }
+
     consome(ENDBLOCK);
+    escopoAtual--;  // Exit the block scope
 }
 
-void tipo()
-{
-
-    if (tk.codigo == CHAR || tk.codigo == INT || tk.codigo == REAL || tk.codigo == BOOL)
-    {
-
+void tipo() {
+    if (tk.codigo == CHAR || tk.codigo == INT || tk.codigo == REAL || tk.codigo == BOOL) {
         consome(tk.codigo);
-    }
-    else
-    {
-
+    } else {
         errorSint(contLinha, "Tipo invalido");
     }
 }
 
-void decl_var()
-{
+void decl_var() {
+    printf("\nENTROU -> decl_var\n");
 
+    // Captura o lexema antes de consumir
+    char lexema[TAM_MAX_LEXEMA];
+    strncpy(lexema, tk.lexema, TAM_MAX_LEXEMA - 1);
+    lexema[TAM_MAX_LEXEMA - 1] = '\0';
+
+    if (Buscar_escopo(lexema, escopoAtual) != -1) {
+        printf("[ERRO] Identificador '%s' já declarado no escopo atual.\n", lexema);
+        errorSint(contLinha, "Identificador já declarado no escopo atual");
+    }
+
+    int tipo_var = tk.codigo;
     consome(ID);
 
-    while (tk.codigo == ABRE_COL)
-    {
+    if (Insercao_tabela(lexema, escopoAtual, tipo_var, "var", false) == -1) {
+        printf("[ERRO] Não foi possível inserir o identificador na tabela de símbolos.\n");
+    }
 
+    while (tk.codigo == ABRE_COL) {
         consome(ABRE_COL);
-        if (tk.cat == CONST_INT || tk.cat == ID)
-        {
+
+        if (tk.cat == CONST_INT || tk.cat == ID) {
             consome(tk.cat);
         }
+
         consome(FECHA_COL);
     }
 
-    if (tk.codigo == ATRIBUICAO)
-    {
+    if (tk.codigo == ATRIBUICAO) {
         consome(ATRIBUICAO);
-        if (tk.cat == CONST_INT || tk.cat == CONST_FLOAT || tk.cat == CONST_CHAR || tk.cat == LITERAL)
-        {
+
+        if (tk.cat == CONST_INT || tk.cat == CONST_FLOAT || tk.cat == CONST_CHAR || tk.cat == LITERAL) {
             consome(tk.cat);
-        }
-        else if (tk.codigo == ABRE_CHAVE)
-        {
+        } else if (tk.codigo == ABRE_CHAVE) {
             consome(ABRE_CHAVE);
-            do
-            {
-                if (tk.cat == CONST_INT || tk.cat == CONST_FLOAT || tk.cat == CONST_CHAR || tk.cat == LITERAL)
-                {
+
+            do {
+                if (tk.cat == CONST_INT || tk.cat == CONST_FLOAT || tk.cat == CONST_CHAR || tk.cat == LITERAL) {
                     consome(tk.cat);
                 }
-                if (tk.codigo == VIRGULA)
-                {
+
+                if (tk.codigo == VIRGULA) {
                     consome(VIRGULA);
-                }
-                else
-                {
+                } else {
                     break;
                 }
             } while (true);
+
             consome(FECHA_CHAVE);
-        }
-        else
-        {
+        } else {
             errorSint(contLinha, "Valor esperado após '='.");
         }
     }
+
+    printf("\nSAIU -> decl_var\n");
 }
 
 void atrib()
@@ -284,11 +263,13 @@ void expr_simp()
     }
     termo();
 
-    if ((tk.cat == OP_ARIT && tk.codigo == ADICAO || tk.codigo == SUBTRACAO) || (tk.cat == OP_LOGIC && tk.codigo == OR_LOGIC))
+    if (((tk.cat == OP_ARIT) && (tk.codigo == ADICAO || tk.codigo == SUBTRACAO)) || 
+        ((tk.cat == OP_LOGIC) && (tk.codigo == OR_LOGIC)))
     {
         consome(tk.codigo);
         termo();
     }
+
 }
 
 void termo()
@@ -297,11 +278,13 @@ void termo()
     {
 
         fator();
-        while ((tk.cat == OP_ARIT && tk.codigo == MULTIPLICACAO || tk.codigo == DIVISAO) || (tk.cat == OP_LOGIC && tk.codigo == AND_LOGIC))
+        while (((tk.cat == OP_ARIT) && (tk.codigo == MULTIPLICACAO || tk.codigo == DIVISAO)) || 
+            ((tk.cat == OP_LOGIC) && (tk.codigo == AND_LOGIC)))
         {
             consome(tk.codigo);
             fator();
         }
+
     }
 }
 

@@ -3,6 +3,7 @@
         "*.py": "python",
         "*.c": "c",
         "analexdoblock.h": "c",
-        "anasintdoblock.h": "c"
+        "anasintdoblock.h": "c",
+        "tabsimb.h": "c"
     }
 }

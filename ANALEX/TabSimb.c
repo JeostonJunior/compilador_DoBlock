@@ -1,101 +1,89 @@
 #include "TabSimb.h"
 #include <stdbool.h>
 #include <string.h>
+#include <stdio.h>
 
 // Inicializa a tabela de símbolos
-void Iniciar_tabela()
-{
+void Iniciar_tabela() {
     tabela_idef.tamTab = 0;
-    escopoAtual = 0; // Escopo global
-}
-
-// Busca um identificador pelo escopo na tabela de símbolos
-int Buscar_escopo(char lexema[], int escopo)
-{
-    // Busca do fim para o início
-    for (int i = tabela_idef.tamTab - 1; i >= 0; i--)
-    {
-        if (tabela_idef.tabela_simb[i].escopo == escopo && strcmp(tabela_idef.tabela_simb[i].lexema, lexema) == 0)
-        {
-            return i;
-        }
-    }
-    return -1;
-}
-
-// Evita a inserção duplicada na tabela de símbolos
-int Insercao_tabela(char lexema[], int tipo, int escopo, char categoria[TAM_CATEGORIA], bool zombie)
-{
-    if (Buscar_escopo(lexema, escopo) != -1)
-    {
-        printf("Erro: Identificador '%s' já declarado neste escopo.\n", lexema);
-        return -1;
-    }
-
-    if (tabela_idef.tamTab == TAM_MAX_TAB)
-    {
-        printf("Erro: Tabela de símbolos cheia.\n");
-        return -1;
-    }
-
-    int i = tabela_idef.tamTab;
-
-    strcpy(tabela_idef.tabela_simb[i].lexema, lexema);
-    tabela_idef.tabela_simb[i].tipo = tipo;
-    tabela_idef.tabela_simb[i].escopo = escopo;
-    strcpy(tabela_idef.tabela_simb[i].categoria, categoria);
-    tabela_idef.tabela_simb[i].zombie = zombie;
-    tabela_idef.tamTab++;
-
-    return i;
-}
-
-// Remove o último identificador inserido na tabela de símbolos
-int Remover_ultimo()
-{
-    if (tabela_idef.tamTab > 0)
-    {
-        int index = tabela_idef.tamTab - 1;
-
-        tabela_idef.tabela_simb[index].lexema[0] = '\0';
-        tabela_idef.tabela_simb[index].escopo = 0;
-        tabela_idef.tabela_simb[index].tipo = 0;
-        tabela_idef.tabela_simb[index].categoria[0] = '\0';
-        tabela_idef.tabela_simb[index].zombie = false;
-        tabela_idef.tamTab--;
-
-        return index;
-    }
-    return -1;
-}
-
-// Busca um identificador na tabela de símbolos
-int Buscar_tabela(char lexema[])
-{
-    for (int i = 0; i < tabela_idef.tamTab; i++)
-    {
-        if (strcmp(lexema, tabela_idef.tabela_simb[i].lexema) == 0)
-        {
-            return i;
-        }
-    }
-    return -1;
 }
 
 // Imprime a tabela de símbolos
-void Imprimir_tabela(TabIdef tabela_idef, int tamTab)
-{
-    printf("| %-20s | %-6s | %-6s | %-10s | %-6s |\n",
-           "Nome ID", "Tipo", "Escopo", "Categoria", "Zombie");
-    printf("|----------------------|--------|--------|------------|--------|\n");
+void Imprimir_tabela() {
+    printf("\nTabela de Símbolos:\n");
+    printf("------------------------------------------------------------------------------------\n");
+    printf("| %-6s | %-10s | %-10s | %-6s | %-10s | %-6s | %-8s |\n", 
+           "Índice", "Lexema", "Tipo", "Escopo", "Categoria", "Zombie", "Endereço");
+    printf("------------------------------------------------------------------------------------\n");
 
-    for (int i = 0; i < tamTab; i++)
-    {
-        printf("| %-20s | %-6d | %-6d | %-10s | %-6s |\n",
+    for (int i = 0; i < tabela_idef.tamTab; i++) {
+        printf("| %-6d | %-10s | %-10d | %-6d | %-10s | %-6d | %-8d |\n",
+               i,
                tabela_idef.tabela_simb[i].lexema,
                tabela_idef.tabela_simb[i].tipo,
                tabela_idef.tabela_simb[i].escopo,
                tabela_idef.tabela_simb[i].categoria,
-               tabela_idef.tabela_simb[i].zombie ? "True" : "False");
+               tabela_idef.tabela_simb[i].zombie,
+               tabela_idef.tabela_simb[i].endereco);
+    }
+    printf("------------------------------------------------------------------------------------\n");
+}
+
+
+// Busca um lexema na tabela de símbolos
+int Buscar_tabela(const char lexema[]) {
+    for (int i = 0; i < tabela_idef.tamTab; i++) {
+        if (strcmp(tabela_idef.tabela_simb[i].lexema, lexema) == 0) {
+            return i;  // Retorna o índice se encontrar o lexema
+        }
+    }
+    return -1;  // Retorna -1 se não encontrar o lexema
+}
+
+// Busca um lexema em um escopo específico
+int Buscar_escopo(char lexema[], int escopo) {
+    for (int i = 0; i < tabela_idef.tamTab; i++) {
+        if (strcmp(tabela_idef.tabela_simb[i].lexema, lexema) == 0 && tabela_idef.tabela_simb[i].escopo == escopo) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+// Insere um novo símbolo na tabela de símbolos e testa se já foi declarado
+int Insercao_tabela(char lexema[], int escopo, int tipo, char categoria[], bool zombie) {
+    if (tabela_idef.tamTab >= TAM_MAX_TAB) {
+        printf("[ERRO] Tabela de símbolos cheia.\n");
+        return -1;
+    }
+
+    int pos = Buscar_escopo(lexema, escopo);
+    if (pos != -1) {
+        printf("[ERRO] Identificador '%s' já declarado no escopo atual.\n", lexema);
+        return -1;
+    }
+
+    TabSimb novoSimbolo;
+    strncpy(novoSimbolo.lexema, lexema, TAM_MAX_LEXEMA - 1);
+    novoSimbolo.lexema[TAM_MAX_LEXEMA - 1] = '\0'; // Assegura que a string esteja terminada em null
+    novoSimbolo.escopo = escopo;
+    novoSimbolo.tipo = tipo;
+    strncpy(novoSimbolo.categoria, categoria, TAM_CATEGORIA - 1);
+    novoSimbolo.categoria[TAM_CATEGORIA - 1] = '\0'; // Assegura que a string esteja terminada em null
+    novoSimbolo.zombie = zombie;
+    novoSimbolo.endereco = tabela_idef.tamTab;
+
+    tabela_idef.tabela_simb[tabela_idef.tamTab++] = novoSimbolo;
+    return 0;
+}
+
+// Remove o último símbolo inserido na tabela de símbolos
+int Remover_ultimo() {
+    if (tabela_idef.tamTab > 0) {
+        tabela_idef.tamTab--;
+        return 0;
+    } else {
+        printf("[ERRO] Tabela de símbolos vazia.\n");
+        return -1;
     }
 }

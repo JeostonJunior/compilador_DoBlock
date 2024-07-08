@@ -10,6 +10,7 @@ block main
 int mat[DIM_LIN][DIM_COL] 
 int i 
 
+
 do Para_Cada_Lin with mat, i  
 
 varying i from 0 to DIM_LIN-1 

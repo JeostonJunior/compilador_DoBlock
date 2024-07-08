@@ -31,7 +31,8 @@ void processador_tokens(FILE *fd)
             break;
         case FIM_PROG:
             printf("\nFIM DO ARQUIVO\n");
-            return; // Exit the function when end of file is reached
+            return; 
+        case ID_CONST: printf("\nID_CONST"); break;;
         case SINAL:
             switch (tk.codigo)
             {
